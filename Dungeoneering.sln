@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dungeoneering", "Dungeoneering\Dungeoneering.csproj", "{4DF0E04F-DB62-4710-A4C9-8D7A05B25ADF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dungeoneering_Server", "Dungeoneering\Dungeoneering_Server.csproj", "{4DF0E04F-DB62-4710-A4C9-8D7A05B25ADF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeoneering_Client", "Dungeoneering_Client\Dungeoneering_Client.csproj", "{447DD1D3-64A5-494A-8205-67B98645A783}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dungeoneering_Client", "Dungeoneering_Client\Dungeoneering_Client.csproj", "{61DBDBDB-589E-43C5-8FB0-B094A020AF36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{4DF0E04F-DB62-4710-A4C9-8D7A05B25ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DF0E04F-DB62-4710-A4C9-8D7A05B25ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DF0E04F-DB62-4710-A4C9-8D7A05B25ADF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{447DD1D3-64A5-494A-8205-67B98645A783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{447DD1D3-64A5-494A-8205-67B98645A783}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{447DD1D3-64A5-494A-8205-67B98645A783}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{447DD1D3-64A5-494A-8205-67B98645A783}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61DBDBDB-589E-43C5-8FB0-B094A020AF36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61DBDBDB-589E-43C5-8FB0-B094A020AF36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61DBDBDB-589E-43C5-8FB0-B094A020AF36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61DBDBDB-589E-43C5-8FB0-B094A020AF36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

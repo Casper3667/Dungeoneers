@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dungeoneering
+namespace Dungeoneering_Server
 {
     class Program
     {
