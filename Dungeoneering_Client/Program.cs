@@ -14,7 +14,6 @@ namespace Dungeoneering_Client
         static byte[] message = null;
         static bool waiting = true;
         static string IP;
-        static Quest quest;
 
         static void Main(string[] args)
         {
