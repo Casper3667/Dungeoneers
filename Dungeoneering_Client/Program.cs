@@ -3,18 +3,22 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.IO;
+using System.Threading;
 
 namespace Dungeoneering_Client
 {
     class Program
     {
-        static TcpClient client = null;
+        static TcpClient client;
         static NetworkStream stream = null;
         static byte[] message = null;
-        static bool waiting = false;
+        static bool waiting = true;
         static string IP;
+        static Quest quest;
+
         static void Main(string[] args)
         {
+            
             Connect();            
         }
 
@@ -22,20 +26,21 @@ namespace Dungeoneering_Client
         {
             try
             {
+                
                 Console.WriteLine("Type the IP of the server you wanna join");
                 string ip = Console.ReadLine();
                 IP = ip;
-                
-                
+                client = new TcpClient(IP, 42069);
+
+                Thread t = new Thread(Receiving);
+                t.IsBackground = true;
+                t.Start(client);
+
                 while (true)
                 {
-                    if(!waiting)
+                    if(waiting)
                     {
                         Sending();
-                    }
-                    if (waiting)
-                    {
-                        Receiving();
                     }
                 }
             }
@@ -49,50 +54,24 @@ namespace Dungeoneering_Client
 
         private static void Sending()
         {
-            client = new TcpClient(IP, 42069);
             stream = client.GetStream();
-            bool dungeon = false;
-            Console.WriteLine("Choice your actions");
-            Console.WriteLine("Possible actions are : Preparing (waiting for comrades), Dungeon (go on a dungeon), Stats (inspect your stats)");
             string action = Console.ReadLine();
-            action.ToUpper();
-            if (action == "PREPARING")
-            {
-                message = Encoding.ASCII.GetBytes(action);
-                stream.Write(message, 0, message.Length);
-
-            }
-            if (action == "DUNGEON")
-            {
-                message = Encoding.ASCII.GetBytes(action);
-                stream.Write(message, 0, message.Length);
-                dungeon = true;
-            }
-            if (action == "STATS")
-            {
-                message = Encoding.ASCII.GetBytes(action);
-                stream.Write(message, 0, message.Length);
-            }
-            if(dungeon)
-            {
-
-            }
-            //waiting = true;
+            action = action.ToUpper();
+            message = Encoding.ASCII.GetBytes(action);
+            stream.Write(message, 0, message.Length);
         }
 
-        private static void Receiving()
+        private static void Receiving(object data)
         {
-            client = new TcpClient(IP, 42069);
-            stream = client.GetStream();
-            message = new byte[256];
-            Int32 receiver = stream.Read(message, 0, message.Length);
-            string serverResponse = Encoding.ASCII.GetString(message, 0, receiver);
-            Console.WriteLine("Message from the client " + serverResponse);
-
-            if(serverResponse == null)
+            while (true)
             {
-                waiting = false;
+                stream = client.GetStream();
+                byte[] m = new byte[256];
+                Int32 receiver = stream.Read(m, 0, m.Length);
+                string serverResponse = Encoding.ASCII.GetString(m, 0, receiver);
+                Console.WriteLine(serverResponse);
             }
+            
         }
     }
 }
