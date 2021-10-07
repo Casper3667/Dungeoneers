@@ -1,4 +1,6 @@
-﻿namespace _Defines
+﻿using System;
+
+namespace _Defines
 {
     public static class _Helper
     {
@@ -9,7 +11,10 @@
             else
                 return true;
         }
-
+        public static void SendMessage(string message)
+        {
+            Console.WriteLine(message);
+        }
 
     }
 }

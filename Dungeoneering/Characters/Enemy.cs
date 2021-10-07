@@ -10,9 +10,10 @@ namespace Dungeon
             damage = (int)_damage;
             hp = (int)_hp;
             armor = (int)_armor;
+            deathMessage = $"{name} has been defeated";
         }
 
-        public void Attack(Character target)
+        public override void Attack(Character target)
         {
             target.TakeDamage(damage);
         }

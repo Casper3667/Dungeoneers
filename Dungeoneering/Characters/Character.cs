@@ -2,12 +2,13 @@
 
 namespace Dungeon
 {
-    internal class Character
+    internal abstract class Character
     {
         protected string name;
         protected int damage;
         protected int hp;
         protected int armor;
+        protected string deathMessage;
 
         private bool CheckDeath()
         {
@@ -17,9 +18,14 @@ namespace Dungeon
         public bool TakeDamage(int damageTaken)
         {
             damageTaken -= armor;
-            if (damageTaken <= 0)
-                return true;
-            return CheckDeath();
+            if (damageTaken >= 0)
+                hp -= damageTaken;
+            bool living = CheckDeath();
+            if (!living)
+                _Helper.SendMessage(deathMessage);
+            return living;
         }
+
+        public abstract void Attack(Character target);
     }
 }
