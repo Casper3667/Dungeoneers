@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Items
 {
-    class Armor: Item
+    public class Armor: Item
     {
         int armor;
         Armor(string _name, int _armor, int _value, int _durability)

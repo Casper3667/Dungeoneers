@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Items
 {
-    class Item
+    public abstract class Item
     {
         protected string name;
         protected int value;

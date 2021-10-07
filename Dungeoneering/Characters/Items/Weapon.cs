@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Items
 {
-    class Weapon : Item
+    public class Weapon : Item
     {
-        int damage;
-        Weapon(string _name, int _damage, int _value, int _durability)
+        public int damage;
+        public Weapon(string _name, int _damage, int _value, int _durability)
         {
             name = _name;
             damage = _damage;
