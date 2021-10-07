@@ -72,10 +72,23 @@ namespace Dungeoneering_Server
             NetworkStream stream = client.GetStream();
 
 
-            while (true)
+                stream = client.GetStream();
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes("Please write your name :)");
+
+                //send back a response
+                stream.Write(msg, 0, msg.Length);
+
+            var name = "";
+
+            while (stream != null)
             {
+                if (name == "")
+                {
+                    name = recieveData(stream);
+                }
                 string recievedData = recieveData(stream);
                 Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
+                SendData(recievedData,stream,name,client);
             }
         }
 
@@ -85,15 +98,65 @@ namespace Dungeoneering_Server
             Byte[] bytes = new Byte[256];
             String data = null;
 
-            while ((i = stream.Read(bytes,0,bytes.Length))!=0)
-            {
-                data = System.Text.Encoding.ASCII.GetString(bytes,0,i);
-                Console.WriteLine($"recieved : {data}");
 
-                data = data.ToLower();
+            //byte[] tempbytes = new Byte[1];
+            //int bytesRead = stream.Read(tempbytes);
+
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                {
+                    data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                    data = data.ToLower();
+                    break;
+                }
+            
+
+           
+            return data;
+        }
+
+        public static void SendData(string recievedData, NetworkStream stream,string name,TcpClient client)
+        {
+
+            var sendData = recievedData.ToLower();
+
+            string chat = $"{name} >>> {recievedData}";
+
+            chat.ToLower();
+
+            foreach (var item in allUsers)
+            {
+                if (client.Client.RemoteEndPoint != item.Client.RemoteEndPoint)
+                {
+
+                    stream = item.GetStream();
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(chat);
+
+                    //send back a response
+                    stream.Write(msg, 0, msg.Length);
+                }
             }
 
-            return data;
+            switch (sendData)
+            {
+                case "dungeon":
+
+                    break;
+                case "preparing":
+
+                    break;
+                case "dun":
+
+                    break;
+                case "fuck":
+
+                    break;
+            }
+
+
+
+
+
+
         }
     }
 }
