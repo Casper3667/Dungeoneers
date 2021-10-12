@@ -29,7 +29,13 @@ namespace _Defines
 
         public static void SendMessageToClient(TcpClient client, string message)
         {
+            NetworkStream stream = client.GetStream();
 
+            stream = client.GetStream();
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
+
+            //send back a response
+            stream.Write(msg, 0, msg.Length);
         }
 
     }
