@@ -29,6 +29,20 @@ namespace _Defines
             }
         }
 
+        public static void SendMessageToAllInParty(string message, List<Player_Client> players)
+        {
+            var mes = message.ToLower();
+
+            foreach (var item in players)
+            {
+                var stream = item.client.GetStream();
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mes);
+
+                //send back a response
+                stream.Write(msg, 0, msg.Length);
+            }
+        }
+
         public static void SendMessageToClient(TcpClient client, string message)
         {
             NetworkStream stream = client.GetStream();
