@@ -22,7 +22,7 @@ namespace Dungeon
                 hp -= damageTaken;
             bool living = CheckDeath();
             if (!living)
-                _Helper.SendMessage(deathMessage);
+                _Helper.SendMessageToAll(deathMessage);
             return living;
         }
 

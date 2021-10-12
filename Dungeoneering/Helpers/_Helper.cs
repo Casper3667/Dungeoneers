@@ -1,4 +1,5 @@
 ﻿using System;
+using Dungeoneering_Server;
 
 namespace _Defines
 {
@@ -11,9 +12,19 @@ namespace _Defines
             else
                 return true;
         }
-        public static void SendMessage(string message)
+        public static void SendMessageToAll(string message)
         {
-            Console.WriteLine(message);
+            var mes =  message.ToLower();
+
+            foreach (var item in Program.allUsers)
+            {
+                  var stream = item.GetStream();
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mes);
+
+                    //send back a response
+                    stream.Write(msg, 0, msg.Length);
+                
+            }
         }
 
     }
