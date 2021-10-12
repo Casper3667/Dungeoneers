@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using Dungeoneering_Server;
 
 namespace _Defines
@@ -23,8 +24,12 @@ namespace _Defines
 
                     //send back a response
                     stream.Write(msg, 0, msg.Length);
-                
             }
+        }
+
+        public static void SendMessageToClient(TcpClient client, string message)
+        {
+
         }
 
     }
