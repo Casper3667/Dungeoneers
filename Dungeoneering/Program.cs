@@ -93,6 +93,7 @@ namespace Dungeoneering_Server
                     name = recieveData(stream);
                     generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
                     allNames.Add(name);
+                    _Helper.SendMessageToClient(client,"current commands : parties,create party,join party");
                 }
                 string recievedData = recieveData(stream);
                 Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
@@ -151,11 +152,11 @@ namespace Dungeoneering_Server
                     }
                 }
             }
-            if(!communication)
-            {
-                byte[] msg = Encoding.ASCII.GetBytes(recievedData);
-                stream.Write(msg, 0, msg.Length);
-            }
+            //if(!communication)
+            //{
+            //    byte[] msg = Encoding.ASCII.GetBytes(recievedData);
+            //    stream.Write(msg, 0, msg.Length);
+            //}
             
 
             //switch (sendData)
@@ -185,12 +186,36 @@ namespace Dungeoneering_Server
                     return false;
 
                 case "parties":
+                    if (ListOfLobbies.Count > 0)
+                    {
+                        foreach (var item in ListOfLobbies)
+                        {
+                            _Helper.SendMessageToClient(client, $"{item.name} {item.Players.Count}/3 \n");
+                        }
+                    }
+                    else
+                    {
+                        _Helper.SendMessageToClient(client,"there is no parties currently available \n" +
+                            "to make a new party write : create party");
+                    }
                     return false;
 
-                case "Y":
+                case "create party":
+                    ListOfLobbies.Add(new Lobby($"Party {parties}"));
+                    parties += 1;
+                    _Helper.SendMessageToClient(client,"Party create \n" +
+                        "to join a party write >join party<, to see a list of parties write >parties< ");
                     return false;
                     
-                case "fuck":
+                case "join party":
+                    if (ListOfLobbies.Count > 0)
+                    {
+                        joinParty(client);
+                    }
+                    else
+                    {
+                        _Helper.SendMessageToClient(client,"No Parties available");
+                    }
                     return false;
 
                 case "fight":
@@ -201,6 +226,33 @@ namespace Dungeoneering_Server
             }
 
             return true;
+        }
+
+        public static void joinParty(TcpClient client)
+        {
+            _Helper.SendMessageToClient(client, "Here is a list of parties :\n");
+
+            foreach (var item in ListOfLobbies)
+            {
+                _Helper.SendMessageToClient(client, $"{item.name} \n");
+            }
+
+            _Helper.SendMessageToClient(client, "Write the number of the party to join \n" +
+                "For example to join party 0 write 0");
+
+            var partyNumber = recieveData(client.GetStream());
+
+            int result = Int32.Parse(partyNumber);
+
+            foreach (var item in allPlayers)
+            {
+                if (item.client == client)
+                {
+                    ListOfLobbies[result].join(item);
+                    //ListOfLobbies.Find(x => x.name.Contains($"Party {partyNumber}"));
+                }
+            }
+            _Helper.SendMessageToClient(client,$"You have joined Party {partyNumber}");
         }
     }
 }

@@ -7,11 +7,16 @@ namespace Dungeoneering_Server
 
     class Lobby
     {
-        private List<Player_Client> Players = new List<Player_Client>();
-        string name;
+        public List<Player_Client> Players = new List<Player_Client>();
+        public string name;
         public Lobby(string name)
         {
             this.name = name;
+        }
+
+        public void join(Player_Client player)
+        {
+            Players.Add(player);
         }
 
     }
