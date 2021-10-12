@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net.Sockets;
 using Dungeoneering_Server;
+using System.Text;
 
 namespace _Defines
 {
@@ -25,6 +27,15 @@ namespace _Defines
                     stream.Write(msg, 0, msg.Length);
                 
             }
+        }
+
+        public static void SendMessageToClient(string message, TcpClient client)
+        {
+            string mes = message.ToLower();
+            NetworkStream stream = client.GetStream();
+
+            byte[] msg = Encoding.ASCII.GetBytes(mes);
+            stream.Write(msg, 0, msg.Length);
         }
 
     }

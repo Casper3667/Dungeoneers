@@ -16,7 +16,6 @@ namespace Dungeoneering_Server
         public static List<string> allNames = new List<string>();
         private static TcpListener server;
         private static Dungeon dungeon;
-        public static bool requesting = false;
 
         static void Main(string[] args)
         {
@@ -92,11 +91,8 @@ namespace Dungeoneering_Server
                     allNames.Add(name);
                 }
                 string recievedData = recieveData(stream);
-                if (!requesting)
-                {
-                    Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
-                    SendData(recievedData, stream, name, client);
-                }
+                Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
+                SendData(recievedData, stream, name, client);
                 
             }
         }
@@ -127,7 +123,7 @@ namespace Dungeoneering_Server
         {
             var sendData = recievedData.ToLower();
             bool communication = PreCommands(sendData, client, stream, name);
-            if (communication && !requesting)
+            if (communication)
             {
                 string chat = $"{name} >>> {recievedData}";
 
@@ -146,7 +142,7 @@ namespace Dungeoneering_Server
                     }
                 }
             }
-            if(!communication || requesting)
+            if(!communication)
             {
                 byte[] msg = Encoding.ASCII.GetBytes(recievedData);
                 stream.Write(msg, 0, msg.Length);

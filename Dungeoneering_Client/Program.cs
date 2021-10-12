@@ -12,12 +12,10 @@ namespace Dungeoneering_Client
         static TcpClient client;
         static NetworkStream stream = null;
         static byte[] message = null;
-        static bool waiting = true;
         static string IP;
 
         static void Main(string[] args)
         {
-            
             Connect();            
         }
 
@@ -37,10 +35,7 @@ namespace Dungeoneering_Client
 
                 while (true)
                 {
-                    if(waiting)
-                    {
-                        Sending();
-                    }
+                    Sending();
                 }
             }
             catch(Exception e)
