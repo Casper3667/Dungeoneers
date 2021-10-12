@@ -12,7 +12,11 @@ namespace Dungeoneering_Server
     class Program
     {
         public static List<TcpClient> allUsers = new List<TcpClient>();
+        public static List<NetworkStream> allStreams = new List<NetworkStream>();
+        public static List<string> allNames = new List<string>();
         private static TcpListener server;
+        private static Dungeon dungeon;
+        public static bool requesting = false;
 
         static void Main(string[] args)
         {
@@ -70,7 +74,7 @@ namespace Dungeoneering_Server
         {
             TcpClient client = (TcpClient)data;
             NetworkStream stream = client.GetStream();
-
+            allStreams.Add(stream);
 
                 stream = client.GetStream();
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes("Please write your name :)");
@@ -85,10 +89,15 @@ namespace Dungeoneering_Server
                 if (name == "")
                 {
                     name = recieveData(stream);
+                    allNames.Add(name);
                 }
                 string recievedData = recieveData(stream);
-                Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
-                SendData(recievedData,stream,name,client);
+                if (!requesting)
+                {
+                    Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
+                    SendData(recievedData, stream, name, client);
+                }
+                
             }
         }
 
@@ -116,47 +125,77 @@ namespace Dungeoneering_Server
 
         public static void SendData(string recievedData, NetworkStream stream,string name,TcpClient client)
         {
-
             var sendData = recievedData.ToLower();
-
-            string chat = $"{name} >>> {recievedData}";
-
-            chat.ToLower();
-
-            foreach (var item in allUsers)
+            bool communication = PreCommands(sendData, client, stream, name);
+            if (communication && !requesting)
             {
-                if (client.Client.RemoteEndPoint != item.Client.RemoteEndPoint)
+                string chat = $"{name} >>> {recievedData}";
+
+                chat.ToLower();
+
+                foreach (var item in allUsers)
                 {
+                    if (client.Client.RemoteEndPoint != item.Client.RemoteEndPoint)
+                    {
 
-                    stream = item.GetStream();
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(chat);
+                        stream = item.GetStream();
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(chat);
 
-                    //send back a response
-                    stream.Write(msg, 0, msg.Length);
+                        //send back a response
+                        stream.Write(msg, 0, msg.Length);
+                    }
                 }
             }
+            if(!communication || requesting)
+            {
+                byte[] msg = Encoding.ASCII.GetBytes(recievedData);
+                stream.Write(msg, 0, msg.Length);
+            }
+            
 
-            switch (sendData)
+            //switch (sendData)
+            //{
+            //    case "dungeon":
+            //        dungeon = new Dungeon(client, stream, name);
+                    
+            //        break;
+            //    case "preparing":
+
+            //        break;
+            //    case "dun":
+
+            //        break;
+            //    case "fuck":
+
+            //        break;
+            //}
+        }
+
+        public static bool PreCommands(string message, TcpClient client, NetworkStream stream, string name)
+        {
+            switch(message)
             {
                 case "dungeon":
-
-                    break;
+                    dungeon = new Dungeon(client, stream, name);
+                    return false;
+                    
                 case "preparing":
-
-                    break;
+                    return false;
+                    
                 case "dun":
-
-                    break;
+                    return false;
+                    
                 case "fuck":
+                    return false;
 
-                    break;
+                case "fight":
+                    return false;
+
+                case "run":
+                    return false;
             }
 
-
-
-
-
-
+            return true;
         }
     }
 }
