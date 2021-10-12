@@ -177,7 +177,19 @@ namespace Dungeoneering_Server
             switch (message)
             {
                 case "dungeon":
-                    dungeon = new Dungeon(client, stream, name);
+                    int listnumber = 0;
+                    for (int i = 0; i < ListOfLobbies.Count; i++)
+                    {
+                        for (int j = 0; j < ListOfLobbies[i].Players.Count; j++)
+                        {
+                            if (ListOfLobbies[i].Players[j].client == client)
+                            {
+                                listnumber = i;
+                            }
+                        }
+                        
+                    }
+                    dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber].Players);
                     return false;
 
                 case "parties":
@@ -197,6 +209,15 @@ namespace Dungeoneering_Server
 
                 case "create party":
                     ListOfLobbies.Add(new Lobby($"Party {parties}"));
+                    int number = 0;
+                    for (int i = 0; i < allPlayers.Count; i++)
+                    {
+                        if(client == allPlayers[i].client)
+                        {
+                            number = i;
+                        }
+                    }
+                    ListOfLobbies[parties].Players.Add(allPlayers[number]);
                     parties += 1;
                     _Helper.SendMessageToClient(client,"Party create \n" +
                         "to join a party write >join party<, to see a list of parties write >parties< ");
@@ -247,6 +268,7 @@ namespace Dungeoneering_Server
                 if (item.client == client)
                 {
                     ListOfLobbies[result].join(item);
+                    //ListOfLobbies[result].Players.Add(item);
                     //ListOfLobbies.Find(x => x.name.Contains($"Party {partyNumber}"));
                 }
             }

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Dungeoneering_Server
 {
-    class Player_Client
+    public class Player_Client
     {
         public Player character;
         public string IpAdress;

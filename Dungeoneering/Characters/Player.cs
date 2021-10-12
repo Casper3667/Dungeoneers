@@ -5,7 +5,7 @@ using Items;
 
 namespace Dungeon
 {
-    class Player : Character
+    public class Player : Character
     {
         int str;
         int dex;

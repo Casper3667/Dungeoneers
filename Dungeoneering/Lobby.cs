@@ -5,7 +5,7 @@ using System.Text;
 namespace Dungeoneering_Server
 {
 
-    class Lobby
+    public class Lobby
     {
         public List<Player_Client> Players = new List<Player_Client>();
         public string name;
