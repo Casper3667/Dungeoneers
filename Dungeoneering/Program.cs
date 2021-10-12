@@ -13,6 +13,7 @@ namespace Dungeoneering_Server
     {
         public static List<TcpClient> allUsers = new List<TcpClient>();
         public static List<NetworkStream> allStreams = new List<NetworkStream>();
+        public static List<Player_Client> allPlayers = new List<Player_Client>();
         public static List<string> allNames = new List<string>();
         private static TcpListener server;
         private static Dungeon dungeon;
@@ -88,6 +89,7 @@ namespace Dungeoneering_Server
                 if (name == "")
                 {
                     name = recieveData(stream);
+                    generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
                     allNames.Add(name);
                 }
                 string recievedData = recieveData(stream);
@@ -95,6 +97,11 @@ namespace Dungeoneering_Server
                 SendData(recievedData, stream, name, client);
                 
             }
+        }
+
+        public static void generatePlayer(TcpClient client,string ip,string name)
+        {
+            allPlayers.Add(new Player_Client(client,ip,name,1,1));
         }
 
         public static string recieveData(NetworkStream stream)

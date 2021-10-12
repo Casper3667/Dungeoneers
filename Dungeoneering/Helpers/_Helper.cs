@@ -25,16 +25,17 @@ namespace _Defines
 
                     //send back a response
                     stream.Write(msg, 0, msg.Length);
-                
             }
         }
 
-        public static void SendMessageToClient(string message, TcpClient client)
+        public static void SendMessageToClient(TcpClient client, string message)
         {
-            string mes = message.ToLower();
             NetworkStream stream = client.GetStream();
 
-            byte[] msg = Encoding.ASCII.GetBytes(mes);
+            stream = client.GetStream();
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
+
+            //send back a response
             stream.Write(msg, 0, msg.Length);
         }
 
