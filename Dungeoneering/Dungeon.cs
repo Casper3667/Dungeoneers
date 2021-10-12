@@ -25,7 +25,7 @@ namespace Dungeoneering_Server
             this.client = client;
             this.stream = stream;
             this.name = name;
-            
+
             Quest();
 
         }
@@ -47,7 +47,7 @@ namespace Dungeoneering_Server
             }
 
             _Helper.SendMessageToAll(message);
-         
+
 
             message = "You wanna fight or run?";
             _Helper.SendMessageToAll(message);
@@ -78,7 +78,7 @@ namespace Dungeoneering_Server
                     run++;
                 }
 
-                
+
             }
 
             if (fight > run)
@@ -122,6 +122,6 @@ namespace Dungeoneering_Server
             }
 
         }
-        
+
     }
 }
