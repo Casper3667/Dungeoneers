@@ -1,6 +1,7 @@
 ﻿using Dungeon;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Dungeoneering_Server
@@ -9,9 +10,11 @@ namespace Dungeoneering_Server
     {
         public Player character;
         private string IpAdress;
+        TcpClient client;
 
-        public Player_Client(string IP,string name,int str,int dex)
+        public Player_Client(TcpClient client,string IP,string name,int str,int dex)
         {
+            this.client = client;
             this.IpAdress = IP;
             character = new Player(name,str,dex);
         }

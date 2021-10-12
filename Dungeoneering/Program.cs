@@ -90,7 +90,7 @@ namespace Dungeoneering_Server
                 if (name == "")
                 {
                     name = recieveData(stream);
-                    generatePlayer(client.Client.RemoteEndPoint.ToString(),name);
+                    generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
                     allNames.Add(name);
                 }
                 string recievedData = recieveData(stream);
@@ -103,9 +103,9 @@ namespace Dungeoneering_Server
             }
         }
 
-        public static void generatePlayer(string ip,string name)
+        public static void generatePlayer(TcpClient client,string ip,string name)
         {
-            allPlayers.Add(new Player_Client(ip,name,1,1));
+            allPlayers.Add(new Player_Client(client,ip,name,1,1));
         }
 
         public static string recieveData(NetworkStream stream)
