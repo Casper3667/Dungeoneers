@@ -105,11 +105,11 @@ namespace Dungeoneering_Server
                         if (j != 0)
                         {
                             string otherMessage = $"It is currently {Program.allNames[i]} turn";
-                            _Helper.SendMessageToClient(otherMessage, Program.allUsers[j]);
+                            _Helper.SendMessageToClient(Program.allUsers[j],otherMessage);
                         }
                     }
                     string mes = $"{Program.allNames[i]} choice your action";
-                    _Helper.SendMessageToClient(mes, Program.allUsers[i]);
+                    _Helper.SendMessageToClient(Program.allUsers[i],mes);
 
                 }
             }
