@@ -14,11 +14,12 @@ namespace Dungeoneering_Server
         public static List<TcpClient> allUsers = new List<TcpClient>();
         public static List<NetworkStream> allStreams = new List<NetworkStream>();
         public static List<Player_Client> allPlayers = new List<Player_Client>();
+        public static List<Lobby> ListOfLobbies = new List<Lobby>();
         public static List<string> allNames = new List<string>();
         private static TcpListener server;
         private static Dungeon dungeon;
         public static bool requesting = false;
-
+        public static int parties = 0;
         static void Main(string[] args)
         {
             try
@@ -37,7 +38,7 @@ namespace Dungeoneering_Server
             AcceptNewClients(server);
 
         }
-
+         
         static void ServerStart(TcpListener server)
         {
 
@@ -180,16 +181,16 @@ namespace Dungeoneering_Server
 
         public static bool PreCommands(string message, TcpClient client, NetworkStream stream, string name)
         {
-            switch(message)
+            switch (message)
             {
                 case "dungeon":
                     dungeon = new Dungeon(client, stream, name);
                     return false;
-                    
-                case "preparing":
+
+                case "parties":
                     return false;
-                    
-                case "dun":
+
+                case "Y":
                     return false;
                     
                 case "fuck":
