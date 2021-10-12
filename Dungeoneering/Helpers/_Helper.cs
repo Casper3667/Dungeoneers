@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using Dungeoneering_Server;
+using System.Text;
 
 namespace _Defines
 {

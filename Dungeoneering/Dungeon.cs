@@ -4,8 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using Dungeoneering_Server;
+using _Defines;
 
 namespace Dungeoneering_Server
 {
@@ -46,34 +46,25 @@ namespace Dungeoneering_Server
                 message = "You are fighting a dragon";
             }
 
-            Program.requesting = true;
-            MessageSender(message);            
+            _Helper.SendMessageToAll(message);
+         
 
             message = "You wanna fight or run?";
-            MessageSender(message);
-            
+            _Helper.SendMessageToAll(message);
 
-            message = $"The majority have chosen to {MessageReceiver()}";
-            MessageSender(message);
-            Program.requesting = false;
-        }
 
-        private void MessageSender(string message)
-        {
-            for (int i = 0; i < Program.allUsers.Count; i++)
+            string fightOrRun = MessageReceiver();
+            message = $"The majority have chosen to {fightOrRun}";
+            _Helper.SendMessageToAll(message);
+            if(fightOrRun == "fight")
             {
-                Program.SendData(message, Program.allStreams[i], name, Program.allUsers[i]);
+                Combat();
             }
-            
+
         }
 
         private string MessageReceiver()
         {
-
-            //foreach (TcpClient clients in Program.allUsers)
-            //{
-            //    string decision = Program.recieveData(stream);
-            //}
             for (int i = 0; i < Program.allUsers.Count; i++)
             {
                 string warroirsMessage = Program.recieveData(Program.allUsers[i].GetStream());
@@ -98,6 +89,36 @@ namespace Dungeoneering_Server
             {
                 return "run";
             }
+        }
+
+        private void Combat()
+        {
+            int teamhealth = 25;
+            int monsterhealth = 5;
+
+            while(monsterhealth > 0 && teamhealth > 0)
+            {
+                for (int i = 0; i < Program.allUsers.Count; i++)
+                {
+                    for (int j = 0; j < Program.allUsers.Count; j++)
+                    {
+                        if (j != 0)
+                        {
+                            string otherMessage = $"It is currently {Program.allNames[i]} turn";
+                            _Helper.SendMessageToClient(otherMessage, Program.allUsers[j]);
+                        }
+                    }
+                    string mes = $"{Program.allNames[i]} choice your action";
+                    _Helper.SendMessageToClient(mes, Program.allUsers[i]);
+
+                }
+            }
+
+        }
+
+        private void MessageSender(string message, TcpClient client, NetworkStream stream, string name)
+        {
+            Program.SendData(message, stream, name, client);
         }
         
     }
