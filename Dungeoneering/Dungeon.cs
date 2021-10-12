@@ -107,7 +107,7 @@ namespace Dungeoneering_Server
                     {
                         if (j != i)
                         {
-                            string otherMessage = $"It is currently {players.Count}'s turn";
+                            string otherMessage = $"It is currently {players[i].character.name}'s turn";
                             _Helper.SendMessageToClient(players[j].client, otherMessage);
                         }
                     }
