@@ -242,6 +242,9 @@ namespace Dungeoneering_Server
 
                 case "attack":
                     return false;
+                case "leave party":
+                    LeaveParty(client);
+                    return false;
             }
 
             return true;
@@ -273,6 +276,30 @@ namespace Dungeoneering_Server
                 }
             }
             _Helper.SendMessageToClient(client,$"You have joined Party {partyNumber}");
+        }
+
+        public static void LeaveParty(TcpClient client)
+        {
+            string lob = "";
+            Player_Client player = new Player_Client(client, "1", "k", 1, 2);
+            foreach(var item in allPlayers)
+            {
+                if (item.client == client)
+                {
+                    player = item;
+                    lob = ListOfLobbies.Find(x => x.Players.Contains(item)).name;
+                }
+            }
+
+            foreach (var item in ListOfLobbies)
+            {
+                if (item.name == lob)
+                {
+                    item.Players.Remove(player);
+                }
+            }
+
+            _Helper.SendMessageToClient(client,"You have left the party");
         }
     }
 }
