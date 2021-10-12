@@ -149,18 +149,13 @@ namespace Dungeoneering_Server
                     }
                 }
             }
-            if(!communication)
-            {
-                byte[] msg = Encoding.ASCII.GetBytes(recievedData);
-                stream.Write(msg, 0, msg.Length);
-            }
-            
+
 
             //switch (sendData)
             //{
             //    case "dungeon":
             //        dungeon = new Dungeon(client, stream, name);
-                    
+
             //        break;
             //    case "preparing":
 
@@ -195,6 +190,9 @@ namespace Dungeoneering_Server
                     return false;
 
                 case "run":
+                    return false;
+
+                case "attack":
                     return false;
             }
 

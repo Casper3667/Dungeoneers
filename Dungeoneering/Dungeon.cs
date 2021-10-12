@@ -102,23 +102,25 @@ namespace Dungeoneering_Server
                 {
                     for (int j = 0; j < Program.allUsers.Count; j++)
                     {
-                        if (j != 0)
+                        if (j != i)
                         {
-                            string otherMessage = $"It is currently {Program.allNames[i]} turn";
-                            _Helper.SendMessageToClient(otherMessage, Program.allUsers[j]);
+                            string otherMessage = $"It is currently {Program.allNames[i]}'s turn";
+                            _Helper.SendMessageToClient(Program.allUsers[j], otherMessage);
                         }
                     }
                     string mes = $"{Program.allNames[i]} choice your action";
-                    _Helper.SendMessageToClient(mes, Program.allUsers[i]);
+                    _Helper.SendMessageToClient(Program.allUsers[i], mes);
+                    string choice = Program.recieveData(Program.allUsers[i].GetStream());
+                    string action = $"{Program.allNames[i]} is {choice} with damage amount";
+                    _Helper.SendMessageToClient(Program.allUsers[i], action);
 
                 }
+                r = new Random();
+                int playerToAttack = r.Next(1, Program.allUsers.Count + 1);
+                string monstersTurn = $"The monster is attacking {Program.allNames[playerToAttack - 1]}";
+                _Helper.SendMessageToAll(monstersTurn);
             }
 
-        }
-
-        private void MessageSender(string message, TcpClient client, NetworkStream stream, string name)
-        {
-            Program.SendData(message, stream, name, client);
         }
         
     }
