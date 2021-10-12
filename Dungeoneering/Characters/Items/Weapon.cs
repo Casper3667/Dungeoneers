@@ -9,7 +9,7 @@ namespace Items
         public int damage;
         public Weapon(string _name, int _damage, int _value, int _durability)
         {
-            name = _name;
+            Name = _name;
             damage = _damage;
             value = _value;
             durability = _durability;
