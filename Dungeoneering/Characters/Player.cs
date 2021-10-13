@@ -8,8 +8,8 @@ namespace Dungeon
 {
     public class Player : Character
     {
-        int str;
-        int dex;
+        public int str;
+        public int dex;
         public List<Item> inventory;
         Weapon sword;
         public Player(string _name, int _str, int _dex)

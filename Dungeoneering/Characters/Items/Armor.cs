@@ -6,7 +6,7 @@ namespace Items
 {
     public class Armor: Item
     {
-        int armor;
+        public int armor;
         Armor(string _name, int _armor, int _value, int _durability)
         {
             Name = _name;

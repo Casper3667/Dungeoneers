@@ -7,8 +7,8 @@ namespace Items
     public abstract class Item
     {
         protected string name;
-        protected int value;
-        protected int durability;
+        public int value;
+        public int durability;
 
         public string Name { get => name; set => name = value; }
     }

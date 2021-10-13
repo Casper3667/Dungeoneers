@@ -4,13 +4,13 @@ namespace Dungeon
 {
     public abstract class Character
     {
-        protected int Level;
-        protected int exp;
+        public int Level;
+        public int exp;
         public string name;
-        protected int damage;
-        protected int hp;
-        protected int armor;
-        protected string deathMessage;
+        public int damage;
+        public int hp;
+        public int armor;
+        public string deathMessage;
 
         public bool CheckDeath()
         {
