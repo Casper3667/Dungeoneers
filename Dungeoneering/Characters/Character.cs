@@ -4,6 +4,8 @@ namespace Dungeon
 {
     public abstract class Character
     {
+        protected int Level;
+        protected int exp;
         public string name;
         protected int damage;
         protected int hp;
