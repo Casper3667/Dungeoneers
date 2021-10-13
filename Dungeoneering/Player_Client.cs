@@ -11,12 +11,13 @@ namespace Dungeoneering_Server
         public Player character;
         public string IpAdress;
         public TcpClient client;
+        public string input;
 
-        public Player_Client(TcpClient client,string IP,string name,int str,int dex)
+        public Player_Client(TcpClient client,string IP,string name,int str,int dex,int lvl)
         {
             this.client = client;
             this.IpAdress = IP;
-            character = new Player(name,str,dex);
+            character = new Player(name,str,dex,lvl);
         }
 
 

@@ -12,14 +12,17 @@ namespace Dungeon
         public int dex;
         public List<Item> inventory;
         Weapon sword;
-        public Player(string _name, int _str, int _dex)
+        public Player(string _name, int _str, int _dex,int lvl)
         {
+            Level = lvl;
             name = _name;
             str = _str;
             dex = _dex;
             sword = new Weapon("Basic sword", 2, 2, 100);
             inventory = new List<Item>();
             inventory.Add(sword);
+
+            this.hp = (50 * Level);
         }
         public override void Attack(Character target)
         {

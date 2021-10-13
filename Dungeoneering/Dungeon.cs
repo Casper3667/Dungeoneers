@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using Dungeoneering_Server;
 using _Defines;
+using System.Threading;
 
 namespace Dungeoneering_Server
 {
@@ -19,14 +20,12 @@ namespace Dungeoneering_Server
         private string message;
         private int fight = 0;
         private int run = 0;
+        public static string result;
         
 
-        public Dungeon(TcpClient client, NetworkStream stream, string name, Lobby players)
+        public Dungeon(Lobby players)
         {
             r = new Random();
-            this.client = client;
-            this.stream = stream;
-            this.name = name;
             this.players = players;
 
             Quest();
@@ -66,11 +65,26 @@ namespace Dungeoneering_Server
 
         }
 
+        public static string expectingMessage(Player_Client player)
+        {
+            string mes;
+            
+            while (player.input == "")
+            {
+
+            }
+
+            mes = player.input;
+
+            return mes;
+        }
+
         private string MessageReceiver()
         {
             for (int i = 0; i < players.Players.Count; i++)
             {
-                string warroirsMessage = Program.recieveData(players.Players[i].client.GetStream());
+                string warroirsMessage = expectingMessage(players.Players[i]);
+                //string warroirsMessage = Program.recieveData(players.Players[i].client.GetStream());
                 if (warroirsMessage == "fight")
                 {
                     fight++;
@@ -94,6 +108,10 @@ namespace Dungeoneering_Server
             }
         }
 
+       
+
+       
+
         private void Combat()
         {
             int teamhealth = 25;
@@ -113,7 +131,13 @@ namespace Dungeoneering_Server
                     }
                     string mes = $"{players.Players[i].character.name} choice your action";
                     _Helper.SendMessageToClient(players.Players[i].client, mes);
-                    string choice = Program.recieveData(players.Players[i].client.GetStream());
+
+                    //Thread z = new Thread(() => DrecieveData(ListOfLobbies[listnumber]));
+                    //z.IsBackground = true;
+                    //z.Start();
+
+                    string choice = expectingMessage(players.Players[i]);
+                    //string choice = Program.recieveData(players.Players[i].client.GetStream());
                     string action = $"{players.Players[i].character.name} is {choice} with damage amount";
                     _Helper.SendMessageToClient(players.Players[i].client, action);
 

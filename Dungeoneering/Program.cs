@@ -76,6 +76,8 @@ namespace Dungeoneering_Server
         {
             TcpClient client = (TcpClient)data;
             NetworkStream stream = client.GetStream();
+
+            Player_Client player = new Player_Client(client, "", "", 1, 1,1);
             allStreams.Add(stream);
 
                 stream = client.GetStream();
@@ -92,21 +94,50 @@ namespace Dungeoneering_Server
                 {
                     name = recieveData(stream);
                     generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
+                    foreach (var item in allPlayers)
+                    {
+                        if (item.client == client)
+                        {
+                            player = item;
+                        }
+                    }
                     allNames.Add(name);
                     _Helper.SendMessageToClient(client,"current commands : parties,create party,join party");
                 }
-                string recievedData = recieveData(stream);
-                Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
-                SendData(recievedData, stream, name, client);
+                    player.input = "";
+                    string recievedData = recieveDataFromPlayer(stream,player);
+                    Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
+                    SendData(recievedData, stream, name, client);
+                
 
             }
         }
 
         public static void generatePlayer(TcpClient client,string ip,string name)
         {
-            allPlayers.Add(new Player_Client(client,ip,name,1,1));
+            allPlayers.Add(new Player_Client(client,ip,name,1,1,1));
         }
+        public static string recieveDataFromPlayer(NetworkStream stream,Player_Client player)
+        {
+            int i;
+            Byte[] bytes = new Byte[256];
+            String data = null;
 
+
+            //byte[] tempbytes = new Byte[1];
+            //int bytesRead = stream.Read(tempbytes);
+
+            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+            {
+                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                data = data.ToLower();
+                break;
+            }
+
+            player.input = data;
+
+            return data;
+        }
         public static string recieveData(NetworkStream stream)
         {
             int i;
@@ -172,6 +203,11 @@ namespace Dungeoneering_Server
             //}
         }
 
+        public static void dungeonStart(Lobby lobby)
+        {
+            Dungeon dungeon = new Dungeon(lobby);
+        }
+
         public static bool PreCommands(string message, TcpClient client, NetworkStream stream, string name)
         {
             switch (message)
@@ -189,7 +225,10 @@ namespace Dungeoneering_Server
                         }
                         
                     }
-                    dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
+                    Thread z = new Thread(() => dungeonStart(ListOfLobbies[listnumber]));
+                    z.IsBackground = true;
+                    z.Start();
+                    //Dungeon dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
                     return false;
 
                 case "parties":
@@ -209,15 +248,15 @@ namespace Dungeoneering_Server
 
                 case "create party":
                     ListOfLobbies.Add(new Lobby($"Party {parties}"));
-                    int number = 0;
-                    for (int i = 0; i < allPlayers.Count; i++)
-                    {
-                        if(client == allPlayers[i].client)
-                        {
-                            number = i;
-                        }
-                    }
-                    ListOfLobbies[parties].Players.Add(allPlayers[number]);
+                    //int number = 0;
+                    //for (int i = 0; i < allPlayers.Count; i++)
+                    //{
+                    //    if(client == allPlayers[i].client)
+                    //    {
+                    //        number = i;
+                    //    }
+                    //}
+                    //ListOfLobbies[parties].Players.Add(allPlayers[number]);
                     parties += 1;
                     _Helper.SendMessageToClient(client,"Party create \n" +
                         "to join a party write >join party<, to see a list of parties write >parties< ");
@@ -281,7 +320,7 @@ namespace Dungeoneering_Server
         public static void LeaveParty(TcpClient client)
         {
             string lob = "";
-            Player_Client player = new Player_Client(client, "1", "k", 1, 2);
+            Player_Client player = new Player_Client(client, "1", "k", 1, 2,1);
             foreach(var item in allPlayers)
             {
                 if (item.client == client)
