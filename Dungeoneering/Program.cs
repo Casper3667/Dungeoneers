@@ -189,7 +189,7 @@ namespace Dungeoneering_Server
                         }
                         
                     }
-                    dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber].Players);
+                    dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
                     return false;
 
                 case "parties":

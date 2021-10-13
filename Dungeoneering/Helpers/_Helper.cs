@@ -29,11 +29,11 @@ namespace _Defines
             }
         }
 
-        public static void SendMessageToAllInParty(string message, List<Player_Client> players)
+        public static void SendMessageToAllInParty(string message, Lobby players)
         {
             var mes = message.ToLower();
 
-            foreach (var item in players)
+            foreach (var item in players.Players)
             {
                 var stream = item.client.GetStream();
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mes);
