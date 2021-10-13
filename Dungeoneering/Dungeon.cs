@@ -114,10 +114,14 @@ namespace Dungeoneering_Server
 
         private void Combat()
         {
-            int teamhealth = 25;
+            int teamHealth = 0;
+            for (int i = 0; i < players.Players.Count; i++)
+            {
+                teamHealth += players.Players[i].character.hp;
+            }
             int monsterhealth = 5;
-
-            while(monsterhealth > 0 && teamhealth > 0)
+            
+            while(monsterhealth > 0 /*&& teamHealth > 0*/)
             {
                 for (int i = 0; i < players.Players.Count; i++)
                 {
@@ -138,7 +142,7 @@ namespace Dungeoneering_Server
 
                     string choice = expectingMessage(players.Players[i]);
                     //string choice = Program.recieveData(players.Players[i].client.GetStream());
-                    string action = $"{players.Players[i].character.name} is {choice} with damage amount";
+                    string action = $"{players.Players[i].character.name} has choosen to {choice} with {players.Players[i].character.damage} damage";
                     _Helper.SendMessageToClient(players.Players[i].client, action);
 
                 }
@@ -146,7 +150,11 @@ namespace Dungeoneering_Server
                 int playerToAttack = r.Next(1, players.Players.Count + 1);
                 string monstersTurn = $"The monster is attacking {players.Players[playerToAttack - 1].character.name}";
                 _Helper.SendMessageToAllInParty(monstersTurn, players);
-                Console.WriteLine("");
+                if(players.Players[playerToAttack - 1].character.hp <= 0)
+                {
+                    string death = $"{players.Players[playerToAttack - 1].character.name} has died";
+                    _Helper.SendMessageToAllInParty(death, players);
+                }
             }
 
         }

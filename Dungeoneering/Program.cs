@@ -17,7 +17,6 @@ namespace Dungeoneering_Server
         public static List<Lobby> ListOfLobbies = new List<Lobby>();
         public static List<string> allNames = new List<string>();
         private static TcpListener server;
-        private static Dungeon dungeon;
         public static bool requesting = false;
         public static int parties = 0;
         static void Main(string[] args)
@@ -108,7 +107,6 @@ namespace Dungeoneering_Server
                     string recievedData = recieveDataFromPlayer(stream,player);
                     Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
                     SendData(recievedData, stream, name, client);
-                
 
             }
         }
