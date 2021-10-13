@@ -14,14 +14,14 @@ namespace Dungeoneering_Server
         private Random r;
         private TcpClient client;
         private NetworkStream stream;
-        private List<Player_Client> players;
+        private Lobby players;
         private string name;
         private string message;
         private int fight = 0;
         private int run = 0;
         
 
-        public Dungeon(TcpClient client, NetworkStream stream, string name, List<Player_Client> players)
+        public Dungeon(TcpClient client, NetworkStream stream, string name, Lobby players)
         {
             r = new Random();
             this.client = client;
@@ -68,9 +68,9 @@ namespace Dungeoneering_Server
 
         private string MessageReceiver()
         {
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < players.Players.Count; i++)
             {
-                string warroirsMessage = Program.recieveData(players[i].client.GetStream());
+                string warroirsMessage = Program.recieveData(players.Players[i].client.GetStream());
                 if (warroirsMessage == "fight")
                 {
                     fight++;
@@ -101,26 +101,26 @@ namespace Dungeoneering_Server
 
             while(monsterhealth > 0 && teamhealth > 0)
             {
-                for (int i = 0; i < players.Count; i++)
+                for (int i = 0; i < players.Players.Count; i++)
                 {
-                    for (int j = 0; j < players.Count; j++)
+                    for (int j = 0; j < players.Players.Count; j++)
                     {
                         if (j != i)
                         {
-                            string otherMessage = $"It is currently {players[i].character.name}'s turn";
-                            _Helper.SendMessageToClient(players[j].client, otherMessage);
+                            string otherMessage = $"It is currently {players.Players[i].character.name}'s turn";
+                            _Helper.SendMessageToClient(players.Players[j].client, otherMessage);
                         }
                     }
-                    string mes = $"{players[i].character.name} choice your action";
-                    _Helper.SendMessageToClient(players[i].client, mes);
-                    string choice = Program.recieveData(players[i].client.GetStream());
-                    string action = $"{players[i].character.name} is {choice} with damage amount";
-                    _Helper.SendMessageToClient(players[i].client, action);
+                    string mes = $"{players.Players[i].character.name} choice your action";
+                    _Helper.SendMessageToClient(players.Players[i].client, mes);
+                    string choice = Program.recieveData(players.Players[i].client.GetStream());
+                    string action = $"{players.Players[i].character.name} is {choice} with damage amount";
+                    _Helper.SendMessageToClient(players.Players[i].client, action);
 
                 }
                 r = new Random();
-                int playerToAttack = r.Next(1, players.Count + 1);
-                string monstersTurn = $"The monster is attacking {players[playerToAttack - 1].character.name}";
+                int playerToAttack = r.Next(1, players.Players.Count + 1);
+                string monstersTurn = $"The monster is attacking {players.Players[playerToAttack - 1].character.name}";
                 _Helper.SendMessageToAllInParty(monstersTurn, players);
                 Console.WriteLine("");
             }
