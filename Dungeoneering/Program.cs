@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using _Defines;
+using System.Data.SQLite;
+using Dungeoneering_Server.Repository;
 
 namespace Dungeoneering_Server
 {
@@ -19,6 +21,9 @@ namespace Dungeoneering_Server
         private static TcpListener server;
         public static bool requesting = false;
         public static int parties = 0;
+        public static DatabaseRepository repo;
+        private static DatabaseProvider provider = new DatabaseProvider("Data Source=Database.db;Version=3;New=true");
+        private static DatabaseMapper mapper = new DatabaseMapper();
         static void Main(string[] args)
         {
             try
@@ -42,7 +47,7 @@ namespace Dungeoneering_Server
         {
 
             Console.WriteLine("Server Started----------------------");
-
+            
             string localIP;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
@@ -51,6 +56,8 @@ namespace Dungeoneering_Server
                 localIP = endPoint.Address.ToString();
             }
             Console.WriteLine($"Server IP: {localIP}");
+
+            repo = new DatabaseRepository(provider, mapper);
         }
 
         private static void AcceptNewClients(TcpListener server)
@@ -93,6 +100,7 @@ namespace Dungeoneering_Server
                 {
                     name = recieveData(stream);
                     generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
+                    repo.AddNewClient(name, 1, 1, 1);
                     foreach (var item in allPlayers)
                     {
                         if (item.client == client)
@@ -200,6 +208,8 @@ namespace Dungeoneering_Server
             //        break;
             //}
         }
+
+        
 
         public static void dungeonStart(Lobby lobby)
         {
