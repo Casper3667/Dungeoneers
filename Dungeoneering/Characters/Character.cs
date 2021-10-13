@@ -12,7 +12,7 @@ namespace Dungeon
         protected int armor;
         protected string deathMessage;
 
-        private bool CheckDeath()
+        public bool CheckDeath()
         {
             return _Helper.CheckHP(hp);
         }
