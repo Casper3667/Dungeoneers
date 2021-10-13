@@ -17,7 +17,6 @@ namespace Dungeoneering_Server
         public static List<Lobby> ListOfLobbies = new List<Lobby>();
         public static List<string> allNames = new List<string>();
         private static TcpListener server;
-        private static Dungeon dungeon;
         public static bool requesting = false;
         public static int parties = 0;
         static void Main(string[] args)
@@ -95,6 +94,7 @@ namespace Dungeoneering_Server
                     allNames.Add(name);
                     _Helper.SendMessageToClient(client,"current commands : parties,create party,join party");
                 }
+
                 string recievedData = recieveData(stream);
                 Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
                 SendData(recievedData, stream, name, client);
@@ -189,7 +189,7 @@ namespace Dungeoneering_Server
                         }
                         
                     }
-                    dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
+                    Dungeon dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
                     return false;
 
                 case "parties":
@@ -217,7 +217,7 @@ namespace Dungeoneering_Server
                             number = i;
                         }
                     }
-                    ListOfLobbies[parties].Players.Add(allPlayers[number]);
+                    
                     parties += 1;
                     _Helper.SendMessageToClient(client,"Party create \n" +
                         "to join a party write >join party<, to see a list of parties write >parties< ");
