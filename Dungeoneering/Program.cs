@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using _Defines;
+using System.Data.SQLite;
+using Dungeoneering_Server.Repository;
 
 namespace Dungeoneering_Server
 {
@@ -19,6 +21,10 @@ namespace Dungeoneering_Server
         private static TcpListener server;
         public static bool requesting = false;
         public static int parties = 0;
+        public static DatabaseRepository repo;
+        private static DatabaseProvider provider = new DatabaseProvider("Data Source=Database.db;Version=3;New=true");
+        private static DatabaseMapper mapper = new DatabaseMapper();
+
         static void Main(string[] args)
         {
             try
@@ -42,7 +48,7 @@ namespace Dungeoneering_Server
         {
 
             Console.WriteLine("Server Started----------------------");
-
+            
             string localIP;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
@@ -51,6 +57,8 @@ namespace Dungeoneering_Server
                 localIP = endPoint.Address.ToString();
             }
             Console.WriteLine($"Server IP: {localIP}");
+
+            repo = new DatabaseRepository(provider, mapper);
         }
 
         private static void AcceptNewClients(TcpListener server)
@@ -86,13 +94,29 @@ namespace Dungeoneering_Server
                 stream.Write(msg, 0, msg.Length);
 
             var name = "";
+            bool accountAlreadyExist = false;
+            
 
             while (stream != null)
             {
                 if (name == "")
                 {
                     name = recieveData(stream);
-                    generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
+                    
+                    for (int i = 0; i < repo.GetAllAccounts(client).Count; i++)
+                    {
+                        if(name == repo.GetAllAccounts(client)[i].character.name)
+                        {
+                            player = repo.GetAllAccounts(client)[i];
+                            accountAlreadyExist = true;
+                        }
+                    }
+                    if(!accountAlreadyExist)
+                    {
+                        repo.AddNewClient(name, 1, 25, 1, 1);
+                        
+                    }
+                    generatePlayer(repo.FindAccount(name, client).client, player.client.Client.RemoteEndPoint.ToString(), player.character.name, player.character.Level, player.character.str, player.character.dex);
                     foreach (var item in allPlayers)
                     {
                         if (item.client == client)
@@ -111,9 +135,9 @@ namespace Dungeoneering_Server
             }
         }
 
-        public static void generatePlayer(TcpClient client,string ip,string name)
+        public static void generatePlayer(TcpClient client,string ip,string name, int level, int damage, int dex)
         {
-            allPlayers.Add(new Player_Client(client,ip,name,1,1,1));
+            allPlayers.Add(new Player_Client(client, ip, name, damage, dex, level));
         }
         public static string recieveDataFromPlayer(NetworkStream stream,Player_Client player)
         {
@@ -200,6 +224,8 @@ namespace Dungeoneering_Server
             //        break;
             //}
         }
+
+        
 
         public static void dungeonStart(Lobby lobby)
         {
