@@ -12,6 +12,7 @@ namespace Dungeoneering_Server
         public string IpAdress;
         public TcpClient client;
         public string input;
+        public bool Dungeoneering;
 
         public Player_Client(TcpClient client,string IP,string name,int str,int dex,int lvl)
         {

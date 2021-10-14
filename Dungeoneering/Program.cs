@@ -125,7 +125,7 @@ namespace Dungeoneering_Server
                         }
                     }
                     allNames.Add(name);
-                    _Helper.SendMessageToClient(client,"current commands : parties,create party,join party");
+                    _Helper.SendMessageToClient(client,"current commands : parties,create party,join party,stats");
                 }
                     player.input = "";
                     string recievedData = recieveDataFromPlayer(stream,player);
@@ -234,84 +234,135 @@ namespace Dungeoneering_Server
 
         public static bool PreCommands(string message, TcpClient client, NetworkStream stream, string name)
         {
+            bool dungeonOrNot = false;
+
+            foreach (var item in allPlayers)
+            {
+                if (item.client == client)
+                {
+                    if (item.Dungeoneering ==true)
+                    {
+                        dungeonOrNot = true;
+                    }
+                    else
+                    {
+                        dungeonOrNot = false;
+                    }
+                }
+            }
             switch (message)
             {
-                case "dungeon":
-                    int listnumber = 0;
-                    for (int i = 0; i < ListOfLobbies.Count; i++)
-                    {
-                        for (int j = 0; j < ListOfLobbies[i].Players.Count; j++)
-                        {
-                            if (ListOfLobbies[i].Players[j].client == client)
-                            {
-                                listnumber = i;
-                            }
-                        }
-                        
-                    }
-                    Thread z = new Thread(() => dungeonStart(ListOfLobbies[listnumber]));
-                    z.IsBackground = true;
-                    z.Start();
-                    //Dungeon dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
-                    return false;
-
-                case "parties":
-                    if (ListOfLobbies.Count > 0)
-                    {
-                        foreach (var item in ListOfLobbies)
-                        {
-                            _Helper.SendMessageToClient(client, $"{item.name} {item.Players.Count}/3 \n");
-                        }
-                    }
-                    else
-                    {
-                        _Helper.SendMessageToClient(client,"there is no parties currently available \n" +
-                            "to make a new party write : create party");
-                    }
-                    return false;
-
-                case "create party":
-                    ListOfLobbies.Add(new Lobby($"Party {parties}"));
-                    //int number = 0;
-                    //for (int i = 0; i < allPlayers.Count; i++)
-                    //{
-                    //    if(client == allPlayers[i].client)
-                    //    {
-                    //        number = i;
-                    //    }
-                    //}
-                    //ListOfLobbies[parties].Players.Add(allPlayers[number]);
-                    parties += 1;
-                    _Helper.SendMessageToClient(client,"Party create \n" +
-                        "to join a party write >join party<, to see a list of parties write >parties< ");
-                    return false;
-
-                case "join party":
-                    if (ListOfLobbies.Count > 0)
-                    {
-                        joinParty(client);
-                    }
-                    else
-                    {
-                        _Helper.SendMessageToClient(client,"No Parties available");
-                    }
-                    return false;
-
-                case "fight":
-                    return false;
-
-                case "run":
-                    return false;
-
-                case "attack":
-                    return false;
-                case "leave party":
-                    LeaveParty(client);
+                case "stats":
+                    CharacterStats(client);
                     return false;
             }
+            if (dungeonOrNot == false)
+            {
+                switch (message)
+                {
+                    case "dungeon":
+                        int listnumber = 0;
+                        for (int i = 0; i < ListOfLobbies.Count; i++)
+                        {
+                            for (int j = 0; j < ListOfLobbies[i].Players.Count; j++)
+                            {
+                                if (ListOfLobbies[i].Players[j].client == client)
+                                {
+                                    listnumber = i;
+                                }
+                            }
+
+                        }
+                        Thread z = new Thread(() => dungeonStart(ListOfLobbies[listnumber]));
+                        z.IsBackground = true;
+                        z.Start();
+                        //Dungeon dungeon = new Dungeon(client, stream, name, ListOfLobbies[listnumber]);
+                        return false;
+
+                    case "parties":
+                        if (ListOfLobbies.Count > 0)
+                        {
+                            foreach (var item in ListOfLobbies)
+                            {
+                                _Helper.SendMessageToClient(client, $"{item.name} {item.Players.Count}/3 \n");
+                            }
+                        }
+                        else
+                        {
+                            _Helper.SendMessageToClient(client, "there is no parties currently available \n" +
+                                "to make a new party write : create party");
+                        }
+                        return false;
+
+                    case "create party":
+                        ListOfLobbies.Add(new Lobby($"Party {parties}"));
+                        //int number = 0;
+                        //for (int i = 0; i < allPlayers.Count; i++)
+                        //{
+                        //    if(client == allPlayers[i].client)
+                        //    {
+                        //        number = i;
+                        //    }
+                        //}
+                        //ListOfLobbies[parties].Players.Add(allPlayers[number]);
+                        parties += 1;
+                        _Helper.SendMessageToClient(client, "Party create \n" +
+                            "to join a party write >join party<, to see a list of parties write >parties< ");
+                        return false;
+
+                    case "join party":
+                        if (ListOfLobbies.Count > 0)
+                        {
+                            joinParty(client);
+                        }
+                        else
+                        {
+                            _Helper.SendMessageToClient(client, "No Parties available");
+                        }
+                        return false;
+
+                    case "fight":
+                        return false;
+
+                    case "run":
+                        return false;
+
+                    case "attack":
+                        return false;
+                    case "leave party":
+                        LeaveParty(client);
+                        return false;
+                }
+            }
+            
 
             return true;
         }
+
+        public static void CharacterStats(TcpClient client)
+        {
+            foreach (var item in allPlayers)
+            {
+                if (item.client == client)
+                {
+                    var pla = item.character;
+
+
+                    _Helper.SendMessageToClient(client, $"Name : {pla.name} \n" +
+                        $"Exp : {pla.exp} \n" +
+                        $"Level : {pla.Level} \n" +
+                        $"HP : {pla.hp} \n" +
+                        $"str : {pla.str} \n" +
+                        $"dex : {pla.dex} \n");
+
+
+
+                }
+            }
+        }
+
+
+
 
         public static void joinParty(TcpClient client)
         {

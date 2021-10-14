@@ -52,6 +52,7 @@ namespace _Defines
 
             //send back a response
             stream.Write(msg, 0, msg.Length);
+            Console.WriteLine("send message --- ");
         }
 
         /// <summary>

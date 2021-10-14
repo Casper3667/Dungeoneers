@@ -22,6 +22,7 @@ namespace Dungeon
             inventory = new List<Item>();
             inventory.Add(sword);
 
+            this.damage = (str * 1);
             this.hp = (50 * Level);
         }
         public override void Attack(Character target)
