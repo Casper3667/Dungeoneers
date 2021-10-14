@@ -24,6 +24,7 @@ namespace Dungeoneering_Server
         public static DatabaseRepository repo;
         private static DatabaseProvider provider = new DatabaseProvider("Data Source=Database.db;Version=3;New=true");
         private static DatabaseMapper mapper = new DatabaseMapper();
+
         static void Main(string[] args)
         {
             try
@@ -93,14 +94,29 @@ namespace Dungeoneering_Server
                 stream.Write(msg, 0, msg.Length);
 
             var name = "";
+            bool accountAlreadyExist = false;
+            
 
             while (stream != null)
             {
                 if (name == "")
                 {
                     name = recieveData(stream);
-                    generatePlayer(client,client.Client.RemoteEndPoint.ToString(),name);
-                    repo.AddNewClient(name, 1, 1, 1);
+                    
+                    for (int i = 0; i < repo.GetAllAccounts(client).Count; i++)
+                    {
+                        if(name == repo.GetAllAccounts(client)[i].character.name)
+                        {
+                            player = repo.GetAllAccounts(client)[i];
+                            accountAlreadyExist = true;
+                        }
+                    }
+                    if(!accountAlreadyExist)
+                    {
+                        repo.AddNewClient(name, 1, 25, 1, 1);
+                        
+                    }
+                    generatePlayer(repo.FindAccount(name, client).client, player.client.Client.RemoteEndPoint.ToString(), player.character.name, player.character.Level, player.character.str, player.character.dex);
                     foreach (var item in allPlayers)
                     {
                         if (item.client == client)
@@ -119,9 +135,9 @@ namespace Dungeoneering_Server
             }
         }
 
-        public static void generatePlayer(TcpClient client,string ip,string name)
+        public static void generatePlayer(TcpClient client,string ip,string name, int level, int damage, int dex)
         {
-            allPlayers.Add(new Player_Client(client,ip,name,1,1,1));
+            allPlayers.Add(new Player_Client(client, ip, name, damage, dex, level));
         }
         public static string recieveDataFromPlayer(NetworkStream stream,Player_Client player)
         {

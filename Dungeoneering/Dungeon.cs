@@ -142,7 +142,7 @@ namespace Dungeoneering_Server
 
                     string choice = expectingMessage(players.Players[i]);
                     //string choice = Program.recieveData(players.Players[i].client.GetStream());
-                    string action = $"{players.Players[i].character.name} has choosen to {choice} with {players.Players[i].character.damage} damage";
+                    string action = $"{players.Players[i].character.name} has choosen to {choice} with {players.Players[i].character.str} damage";
                     _Helper.SendMessageToClient(players.Players[i].client, action);
 
                 }

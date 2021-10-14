@@ -4,6 +4,7 @@ using System.Text;
 using System.Data.SQLite;
 using System.Data;
 using System.Linq;
+using System.Net.Sockets;
 
 namespace Dungeoneering_Server.Repository
 {
@@ -24,7 +25,10 @@ namespace Dungeoneering_Server.Repository
             IDbConnection con = provider.CreateConnection();
             con.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Level INTEGER, Damage INTEGER, Health INTEGER);", (SQLiteConnection)con);
+            //SQLiteCommand cmd = new SQLiteCommand("DROP TABLE clients", (SQLiteConnection)con);
+            //cmd.ExecuteNonQuery();
+
+            SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Level INTEGER, Damage INTEGER, Health INTEGER, Dexterity INTEGER);", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             con.Close();
@@ -32,29 +36,44 @@ namespace Dungeoneering_Server.Repository
         }
 
 
-        public void AddNewClient(string name, int level, int damage, int health)
+        public void AddNewClient(string name, int level, int damage, int health, int dex)
         {
             IDbConnection con = provider.CreateConnection();
             con.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO clients(Name, Level, Damage, Health) VALUES ('{name}', '{level}', '{damage}', '{health}')", (SQLiteConnection)con);
+            SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO clients(Name, Level, Damage, Health, Dexterity) VALUES ('{name}', '{level}', '{damage}', '{health}', '{dex}')", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             con.Close();
         }
 
-        public Player_Client FindAccount(string name)
+        public Player_Client FindAccount(string name, TcpClient client)
         {
             IDbConnection con = provider.CreateConnection();
             con.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand($"SELECT * from clients Where ID = '{name}'", (SQLiteConnection)con);
+            SQLiteCommand cmd = new SQLiteCommand($"SELECT * from clients Where Name = '{name}'", (SQLiteConnection)con);
             SQLiteDataReader reader = cmd.ExecuteReader();
-            Player_Client result = mapper.ReadAllClientsFromMapper(reader).First();
+            Player_Client result = mapper.ReadAllClientsFromMapper(reader, client).First();
 
             con.Close();
 
             return result;
+        }
+
+        public List<Player_Client> GetAllAccounts(TcpClient client)
+        {
+            IDbConnection con = provider.CreateConnection();
+            con.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand("Select * from clients", (SQLiteConnection)con);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            List<Player_Client> result = mapper.ReadAllClientsFromMapper(reader, client);
+
+            con.Close();
+
+            return result;
+            
         }
     }
 }
