@@ -332,6 +332,11 @@ namespace Dungeoneering_Server
                     case "leave party":
                         LeaveParty(client);
                         return false;
+                    case "remove":
+                        repo.RemovePlayer(repo.FindAccount(name, client).character.name, repo.FindAccount(name, client).client);
+                        client.Client.Disconnect(false);
+                        Environment.Exit(0);
+                        return false;
                 }
             }
             
