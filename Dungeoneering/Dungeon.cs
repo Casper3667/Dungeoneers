@@ -28,26 +28,49 @@ namespace Dungeoneering_Server
             r = new Random();
             this.players = players;
 
-            Quest();
+            ChooseLevel();
 
         }
 
-        private void Quest()
+        private void ChooseLevel()
         {
+            var leader = players.Players[0];
+            string leaderString = $"{leader.character.name} Is the leader \n" +
+                $"leader is choosing dificulty \n";
+            _Helper.SendMessageToAllInParty(leaderString, players);
+
+            string dungeons = $"Avilable Dungeons : \n" +
+                $"Dungeon 1 > lvl 1 - 3 \n" +
+                $"Dungeon 2 > lvl 2 - 6 \n" +
+                $"Dungeon 3 > lvl 3 - 9 \n" +
+                $"to pick a dungeon, write the number of the associated dungeon, dungeon 1 would for exaple be 1 \n";
+
+            _Helper.SendMessageToClient(leader.client, dungeons);
+
+            int result = Int32.Parse(expectingMessage(leader));
+
+            Random rnd = new Random();
+            int level = rnd.Next(result,result*3);
+
+            Quest(level);
+        }
+
+        private void Quest(int level)
+        {
+            int monsterLevel = level;
             int tier = r.Next(1, 4);
             if(tier == 1)
             {
-                message = "You are fighting a goblin";
+                message = $"You are fighting a lvl {monsterLevel} goblin \n";
             }
             if (tier == 2)
             {
-                message = "You are fighting a orc";
+                message = $"You are fighting a lvl {monsterLevel} orc \n";
             }
             if (tier == 3)
             {
-                message = "You are fighting a dragon";
+                message = $"You are fighting a lvl {monsterLevel} dragon \n";
             }
-
             _Helper.SendMessageToAllInParty(message, players);
 
 
@@ -60,7 +83,7 @@ namespace Dungeoneering_Server
             _Helper.SendMessageToAllInParty(message, players);
             if(fightOrRun == "fight")
             {
-                Combat();
+                Combat(monsterLevel);
             }
             else
             {
@@ -120,19 +143,44 @@ namespace Dungeoneering_Server
 
        
 
-        private void Combat()
+        private void Combat(int monsterlevel)
         {
+            bool partyDeath = false;
             int teamHealth = 0;
             for (int i = 0; i < players.Players.Count; i++)
             {
                 players.Players[i].Dungeoneering = true;
                 teamHealth += players.Players[i].character.hp;
             }
-            int monsterhealth = 30;
-            int monsterDmg = 5;
+            int monsterhealth = 30*monsterlevel;
+            int monsterDmg = 5 * monsterlevel;
+
+
+            string monsterStats = $"Monster stats : \n " +
+                $"level : {monsterlevel} \n" +
+                $"health : {monsterhealth} \n" +
+                $"damage : {5} - {monsterDmg}\n";
+
+            _Helper.SendMessageToAllInParty(monsterStats, players);
             
             while(monsterhealth > 0 /*&& teamHealth > 0*/)
             {
+                int count = 0;
+                
+                foreach (var item in players.Players)
+                {
+                    
+                    if (item.character.hp <= 0)
+                    {
+                        count += 1;
+                    }
+                }
+
+                if (count >= players.Players.Count)
+                {
+                    partyDeath = true;
+                    break;
+                }
                 for (int i = 0; i < players.Players.Count; i++)
                 {
                     for (int j = 0; j < players.Players.Count; j++)
@@ -143,7 +191,7 @@ namespace Dungeoneering_Server
                             _Helper.SendMessageToAllInParty(otherMessage,players);
                         }
                     }
-                    string mes = $"{players.Players[i].character.name} choice your action,\n";
+                    string mes = $"{players.Players[i].character.name} choose your action,\n";
                     _Helper.SendMessageToClient(players.Players[i].client, mes);
                     mes = $"available actions : attack \n";
                     _Helper.SendMessageToClient(players.Players[i].client, mes);
@@ -157,9 +205,10 @@ namespace Dungeoneering_Server
                         string choice = expectingMessage(players.Players[i]);
                         if (choice == "attack")
                         {
-                            string action = $"{players.Players[i].character.name} has choosen to Melee attack with {players.Players[i].character.damage} damage \n";
+                            var dmg = players.Players[i].character.Attack();
+                            string action = $"{players.Players[i].character.name} has choosen to Melee attack{players.Players[i].character.AttackRange()} for {dmg} damage \n";
                             _Helper.SendMessageToAllInParty(action, players);
-                            monsterhealth -= players.Players[i].character.damage;
+                            monsterhealth -= dmg;
                             string monsterFeedback = $"the monster has {monsterhealth} hp left \n";
                             _Helper.SendMessageToAllInParty(monsterFeedback, players);
                             break;
@@ -173,8 +222,9 @@ namespace Dungeoneering_Server
                 int playerToAttack = r.Next(1, players.Players.Count + 1);
                 if (monsterhealth >0)
                 {
-                    string monstersTurn = $"The monster is attacking {players.Players[playerToAttack - 1].character.name}, they took {monsterDmg} damage \n";
-                    players.Players[playerToAttack - 1].character.hp -= monsterDmg;
+                    var monsterRoll = r.Next(5, monsterDmg);
+                    string monstersTurn = $"The monster is attacking {players.Players[playerToAttack - 1].character.name}, they took {monsterRoll} damage \n";
+                    players.Players[playerToAttack - 1].character.hp -= monsterRoll;
                     _Helper.SendMessageToAllInParty(monstersTurn, players);
                     string healtLeft = $"{players.Players[playerToAttack - 1].character.name} has {players.Players[playerToAttack - 1].character.hp}hp left \n";
                     _Helper.SendMessageToAllInParty(healtLeft, players);
@@ -189,10 +239,51 @@ namespace Dungeoneering_Server
             foreach (var item in players.Players)
             {
                 item.Dungeoneering = false;
+                if (partyDeath == false)
+                {
+                    item.character.GaintExperience(5 * monsterlevel);
+                }
             }
 
-            string ret = $"Monster has died, returning to lobby screen, xp rewarded \n";
-            _Helper.SendMessageToAllInParty(ret, players);
+            if (partyDeath == true)
+            {
+                string allDeadLul = "all players have died, return to lobby";
+                _Helper.SendMessageToAllInParty(allDeadLul, players);
+            }
+            if (partyDeath == false)
+            {
+                string ret = $"Monster has died, returning to lobby screen, {5*monsterlevel}xp rewarded \n";
+                _Helper.SendMessageToAllInParty(ret, players);
+
+
+                string again = $"Do the party wish to continue exploring? Leader please choose \n" +
+                    $"Leader is : {players.Players[0].character.name} \n";
+                _Helper.SendMessageToAllInParty(again, players);
+
+
+                while (true)
+                {
+
+                    string leaderOnly = "Do you wish to continue? \n" +
+                        "yes or no?";
+                    _Helper.SendMessageToClient(players.Players[0].client, leaderOnly);
+
+                    string Expa = expectingMessage(players.Players[0]);
+                    Expa = Expa.ToLower();
+                    if (Expa == "yes")
+                    {
+                        ChooseLevel();
+                    }
+                    else if (Expa == "no")
+                    {
+                        string ratata = $"returning to lobby screen";
+                        _Helper.SendMessageToAllInParty(ratata, players);
+                        break;
+                    }
+                }
+
+                
+            }
 
 
         }

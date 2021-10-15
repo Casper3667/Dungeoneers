@@ -31,6 +31,22 @@ namespace Dungeon
             target.TakeDamage(damage);
         }
 
+        public  int Attack()
+        {
+            Random rnd = new Random();
+
+            var dmg = rnd.Next(1, str+1);
+
+            return dmg;
+        }
+
+        public string AttackRange()
+        {
+            string range = $"({1} - {str + 1}) damage";
+
+            return range;
+        }
+
         public void TakeItem(Item target)
         {
             if (inventory.Contains(target))
@@ -41,6 +57,23 @@ namespace Dungeon
         public string GetInventory()
         {
             return _Helper.NiceList<Item>(inventory);
+        }
+
+        public void GaintExperience(int xp)
+        {
+            exp += xp;
+
+            if (exp > (100*Level))
+            {
+                Level += 1;
+
+                str += 5;
+                dex += 5;
+                hp += 10;
+
+            }
+
+            
         }
     }
 }
