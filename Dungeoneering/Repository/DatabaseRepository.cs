@@ -52,13 +52,25 @@ namespace Dungeoneering_Server.Repository
             IDbConnection con = provider.CreateConnection();
             con.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand($"SELECT * from clients Where Name = '{name}'", (SQLiteConnection)con);
+            SQLiteCommand cmd = new SQLiteCommand($"SELECT * from clients WHERE Name = '{name}'", (SQLiteConnection)con);
             SQLiteDataReader reader = cmd.ExecuteReader();
             Player_Client result = mapper.ReadAllClientsFromMapper(reader, client).First();
 
             con.Close();
 
             return result;
+        }
+
+        public void RemovePlayer(string name, TcpClient client)
+        {
+            IDbConnection con = provider.CreateConnection();
+            con.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand($"DELETE FROM clients WHERE Name = '{name}'", (SQLiteConnection)con);
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+
         }
 
         public List<Player_Client> GetAllAccounts(TcpClient client)
@@ -75,5 +87,7 @@ namespace Dungeoneering_Server.Repository
             return result;
             
         }
+
+        
     }
 }

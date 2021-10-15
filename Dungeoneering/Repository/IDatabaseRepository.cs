@@ -11,6 +11,8 @@ namespace Dungeoneering_Server.Repository
 
         Player_Client FindAccount(string name, TcpClient client);
 
+        void RemovePlayer(string name, TcpClient client);
+
         List<Player_Client> GetAllAccounts(TcpClient client);
     }
 }
