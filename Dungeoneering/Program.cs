@@ -8,6 +8,7 @@ using System.Threading;
 using _Defines;
 using System.Data.SQLite;
 using Dungeoneering_Server.Repository;
+using System.Security.Cryptography;
 
 namespace Dungeoneering_Server
 {
@@ -84,7 +85,7 @@ namespace Dungeoneering_Server
             TcpClient client = (TcpClient)data;
             NetworkStream stream = client.GetStream();
 
-            Player_Client player = new Player_Client(client, "", "", 1, 1,1);
+            Player_Client player = new Player_Client(client, "", "", "", "", 1, 1,1);
             allStreams.Add(stream);
 
                 stream = client.GetStream();
@@ -111,12 +112,17 @@ namespace Dungeoneering_Server
                             accountAlreadyExist = true;
                         }
                     }
-                    if(!accountAlreadyExist)
+                    if (accountAlreadyExist)
                     {
-                        repo.AddNewClient(name, 1, 25, 1, 1);
-                        
+                        LogIn(player);
                     }
-                    generatePlayer(repo.FindAccount(name, client).client, player.client.Client.RemoteEndPoint.ToString(), player.character.name, player.character.Level, player.character.str, player.character.dex);
+                    if (!accountAlreadyExist)
+                    {
+                        player.character.name = name;
+                        CreateAccount(player);
+
+                    }
+                    generatePlayer(repo.FindAccount(name, client).client, player.client.Client.RemoteEndPoint.ToString(), player.character.name, player.character.password, player.character.salt, player.character.Level, player.character.str, player.character.dex);
                     foreach (var item in allPlayers)
                     {
                         if (item.client == client)
@@ -135,9 +141,9 @@ namespace Dungeoneering_Server
             }
         }
 
-        public static void generatePlayer(TcpClient client,string ip,string name, int level, int damage, int dex)
+        public static void generatePlayer(TcpClient client,string ip,string name, string password, string salt, int level, int damage, int dex)
         {
-            allPlayers.Add(new Player_Client(client, ip, name, damage, dex, level));
+            allPlayers.Add(new Player_Client(client, ip, name, password, salt, damage, dex, level));
         }
         public static string recieveDataFromPlayer(NetworkStream stream,Player_Client player)
         {
@@ -205,24 +211,6 @@ namespace Dungeoneering_Server
                     }
                 }
             }
-
-
-            //switch (sendData)
-            //{
-            //    case "dungeon":
-            //        dungeon = new Dungeon(client, stream, name);
-
-            //        break;
-            //    case "preparing":
-
-            //        break;
-            //    case "dun":
-
-            //        break;
-            //    case "fuck":
-
-            //        break;
-            //}
         }
 
         
@@ -367,7 +355,66 @@ namespace Dungeoneering_Server
         }
 
 
+        private static void CreateAccount(Player_Client player)
+        {
+            byte[] pass = Encoding.UTF8.GetBytes("What would you like as your password?");
+            player.client.GetStream().Write(pass, 0, pass.Length);
 
+            string password = recieveData(player.client.GetStream());
+
+            byte[] hashedpassword = Hashing(password);
+
+            byte[] salt = CreateSalt();
+
+            string seed = Convert.ToBase64String(salt);
+
+            string lockedpassword = Convert.ToBase64String(hashedpassword) + Convert.ToBase64String(salt);
+
+            player.character.password = lockedpassword;
+            player.character.salt = seed;
+
+            repo.AddNewClient(player.character.name, player.character.password, player.character.salt, player.character.Level, player.character.damage, player.character.hp, player.character.dex);
+        }
+
+        private static void LogIn(Player_Client player)
+        {
+            byte[] pass = Encoding.UTF8.GetBytes("Type in the password");
+            player.client.GetStream().Write(pass, 0, pass.Length);
+
+            string password = recieveData(player.client.GetStream());
+
+            byte[] hashingPassword = Hashing(password);
+            string fullPassword = Convert.ToBase64String(hashingPassword) + player.character.salt;
+            if (fullPassword == player.character.password)
+            {
+                player = repo.FindAccount(player.character.name, player.client);
+            }
+            else
+            {
+                while (true)
+                {
+                    byte[] tryAgain = Encoding.UTF8.GetBytes("That is not the right password, type 1 to try again and 2 to create a new account");
+                    player.client.GetStream().Write(tryAgain, 0, tryAgain.Length);
+
+                    string choice = recieveData(player.client.GetStream());
+                    if (choice == "1")
+                    {
+                        LogIn(player);
+                        break;
+                    }
+                    if (choice == "2")
+                    {
+                        byte[] newName = Encoding.UTF8.GetBytes("What would you like as your name?");
+                        player.client.GetStream().Write(newName, 0, newName.Length);
+                        string name = recieveData(player.client.GetStream());
+                        player.character.name = name;
+                        CreateAccount(player);
+                        break;
+                    }
+                }
+
+            }
+        }
 
         public static void joinParty(TcpClient client)
         {
@@ -400,7 +447,7 @@ namespace Dungeoneering_Server
         public static void LeaveParty(TcpClient client)
         {
             string lob = "";
-            Player_Client player = new Player_Client(client, "1", "k", 1, 2,1);
+            Player_Client player = new Player_Client(client, "1", "k", "", "", 1, 2,1);
             foreach(var item in allPlayers)
             {
                 if (item.client == client)
@@ -419,6 +466,27 @@ namespace Dungeoneering_Server
             }
 
             _Helper.SendMessageToClient(client,"You have left the party");
+        }
+
+        private static byte[] Hashing(string password)
+        {
+            using (SHA256 mySHA256 = SHA256.Create())
+            {
+                byte[] decprytedPassword = Encoding.UTF8.GetBytes(password);
+
+                return mySHA256.ComputeHash(decprytedPassword);
+            }
+        }
+
+        private static byte[] CreateSalt()
+        {
+            using (var r = RandomNumberGenerator.Create())
+            {
+                byte[] salt = new byte[10];
+                r.GetBytes(salt);
+                return salt;
+            }
+
         }
     }
 }

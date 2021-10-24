@@ -14,12 +14,14 @@ namespace Dungeoneering_Server.Repository
             while (reader.Read())
             {
                 string name = reader.GetString(0);
-                int level = reader.GetInt32(1);
-                int damage = reader.GetInt32(2);
-                int health = reader.GetInt32(3);
-                int dex = reader.GetInt32(4);
+                string password = reader.GetString(1);
+                string salt = reader.GetString(2);
+                int level = reader.GetInt32(3);
+                int damage = reader.GetInt32(4);
+                int health = reader.GetInt32(5);
+                int dex = reader.GetInt32(6);
 
-                results.Add(new Player_Client(client, client.Client.RemoteEndPoint.ToString(), name, damage, dex, level));
+                results.Add(new Player_Client(client, client.Client.RemoteEndPoint.ToString(), name, password, salt, damage, dex, level));
 
             }
             return results;

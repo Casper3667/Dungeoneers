@@ -10,12 +10,16 @@ namespace Dungeon
     {
         public int str;
         public int dex;
+        public string password;
+        public string salt;
         public List<Item> inventory;
         Weapon sword;
-        public Player(string _name, int _str, int _dex,int lvl)
+        public Player(string _name, string _password, string _salt, int _str, int _dex,int lvl)
         {
             Level = lvl;
             name = _name;
+            password = _password;
+            salt = _salt;
             str = _str;
             dex = _dex;
             sword = new Weapon("Basic sword", 2, 2, 100);

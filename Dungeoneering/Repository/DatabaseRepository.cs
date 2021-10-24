@@ -28,7 +28,7 @@ namespace Dungeoneering_Server.Repository
             //SQLiteCommand cmd = new SQLiteCommand("DROP TABLE clients", (SQLiteConnection)con);
             //cmd.ExecuteNonQuery();
 
-            SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Level INTEGER, Damage INTEGER, Health INTEGER, Dexterity INTEGER);", (SQLiteConnection)con);
+            SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Password STRING, Salt STRING, Level INTEGER, Damage INTEGER, Health INTEGER, Dexterity INTEGER);", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             con.Close();
@@ -36,12 +36,12 @@ namespace Dungeoneering_Server.Repository
         }
 
 
-        public void AddNewClient(string name, int level, int damage, int health, int dex)
+        public void AddNewClient(string name, string password, string salt, int level, int damage, int health, int dex)
         {
             IDbConnection con = provider.CreateConnection();
             con.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO clients(Name, Level, Damage, Health, Dexterity) VALUES ('{name}', '{level}', '{damage}', '{health}', '{dex}')", (SQLiteConnection)con);
+            SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO clients(Name, Password, Salt, Level, Damage, Health, Dexterity) VALUES ('{name}', '{password}', '{salt}', '{level}', '{damage}', '{health}', '{dex}')", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             con.Close();

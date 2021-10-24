@@ -7,7 +7,7 @@ namespace Dungeoneering_Server.Repository
 {
     interface IDatabaseRepository
     {
-        void AddNewClient(string name, int level, int damage, int health, int dex);
+        void AddNewClient(string name, string password, string salt, int level, int damage, int health, int dex);
 
         Player_Client FindAccount(string name, TcpClient client);
 
