@@ -47,6 +47,17 @@ namespace Dungeoneering_Server.Repository
             con.Close();
         }
 
+        public void LevelUp(string name, int level, int dmg, int dex, int health)
+        {
+            IDbConnection con = provider.CreateConnection();
+            con.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand($"UPDATE clients SET(Level, Damage, Dexterity, Health) = ('{level}', '{dmg}', '{dex}', '{health}') WHERE Name = '{name}'", (SQLiteConnection)con);
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+        }
+
         public Player_Client FindAccount(string name, TcpClient client)
         {
             IDbConnection con = provider.CreateConnection();

@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Text;
 using Items;
 using _Defines;
+using Dungeoneering_Server;
+using System.Net.Sockets;
 
 namespace Dungeon
 {
     public class Player : Character
     {
+        private TcpClient client;
         public int str;
         public int dex;
         public string password;
         public string salt;
         public List<Item> inventory;
         Weapon sword;
-        public Player(string _name, string _password, string _salt, int _str, int _dex,int lvl)
+        public Player(TcpClient client, string _name, string _password, string _salt, int _str, int _dex,int lvl)
         {
+            this.client = client;
             Level = lvl;
             name = _name;
             password = _password;
@@ -74,7 +78,7 @@ namespace Dungeon
                 str += 5;
                 dex += 5;
                 hp += 10;
-
+                Program.LevelUp(name, client);
             }
 
             

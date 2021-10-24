@@ -18,7 +18,7 @@ namespace Dungeoneering_Server
         {
             this.client = client;
             this.IpAdress = IP;
-            character = new Player(name, password, salt, str,dex,lvl);
+            character = new Player(client, name, password, salt, str,dex,lvl);
         }
 
 
