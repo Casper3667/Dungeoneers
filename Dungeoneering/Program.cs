@@ -135,7 +135,11 @@ namespace Dungeoneering_Server
                 }
                     player.input = "";
                     string recievedData = recieveDataFromPlayer(stream,player);
-                    Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
+                if (recievedData == null)
+                {
+                    break;
+                }
+                Console.WriteLine($"{client.Client.RemoteEndPoint} >> {recievedData}");
                     SendData(recievedData, stream, name, client);
 
             }
@@ -155,11 +159,19 @@ namespace Dungeoneering_Server
             //byte[] tempbytes = new Byte[1];
             //int bytesRead = stream.Read(tempbytes);
 
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+            try
             {
-                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                data = data.ToLower();
-                break;
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                {
+                    data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                    data = data.ToLower();
+                    break;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Connection lost");
+                player.client.Client.Disconnect(false);
             }
 
             player.input = data;
