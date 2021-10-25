@@ -9,6 +9,7 @@ namespace Dungeon
         public string name;
         public int damage;
         public int hp;
+        public int maxHP;
         public int armor;
         public string deathMessage;
 
