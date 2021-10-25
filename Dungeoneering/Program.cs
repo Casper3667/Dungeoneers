@@ -49,7 +49,7 @@ namespace Dungeoneering_Server
         {
 
             Console.WriteLine("Server Started----------------------");
-            
+
             string localIP;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
@@ -96,14 +96,14 @@ namespace Dungeoneering_Server
 
             var name = "";
             bool accountAlreadyExist = false;
-            
+
 
             while (stream != null)
             {
                 if (name == "")
                 {
                     name = recieveData(stream);
-                    
+
                     for (int i = 0; i < repo.GetAllAccounts(client).Count; i++)
                     {
                         if(name == repo.GetAllAccounts(client)[i].character.name)
@@ -174,7 +174,7 @@ namespace Dungeoneering_Server
                 player.client.Client.Disconnect(false);
             }
 
-            player.input = data;
+
 
             return data;
         }
@@ -187,6 +187,7 @@ namespace Dungeoneering_Server
 
             //byte[] tempbytes = new Byte[1];
             //int bytesRead = stream.Read(tempbytes);
+
 
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
@@ -225,7 +226,7 @@ namespace Dungeoneering_Server
             }
         }
 
-        
+
 
         public static void dungeonStart(Lobby lobby)
         {
@@ -339,7 +340,7 @@ namespace Dungeoneering_Server
                         return false;
                 }
             }
-            
+
 
             return true;
         }
