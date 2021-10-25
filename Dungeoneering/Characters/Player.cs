@@ -16,7 +16,7 @@ namespace Dungeon
         public string password;
         public string salt;
         public List<Item> inventory;
-        Weapon sword;
+        public Weapon sword;
         public Player(TcpClient client, string _name, string _password, string _salt, int _str, int _dex,int lvl)
         {
             this.client = client;
@@ -32,6 +32,7 @@ namespace Dungeon
 
             this.damage = (str * 1);
             this.hp = (50 * Level);
+            maxHP = hp;
         }
         public override void Attack(Character target)
         {
@@ -39,12 +40,17 @@ namespace Dungeon
             target.TakeDamage(damage);
         }
 
-        public  int Attack()
+        public void changeWeapon(Weapon weap)
+        {
+            sword = weap;
+        }
+
+        public int Attack()
         {
             Random rnd = new Random();
 
             var dmg = rnd.Next(str, (str*3));
-
+            dmg += sword.attack();
             return dmg;
         }
 
@@ -77,8 +83,10 @@ namespace Dungeon
 
                 str += 5;
                 dex += 5;
-                hp += 10;
+                hp += 20;
+                maxHP += 20;
 
+               
                 Program.LevelUp(name, client,this.Level,str,dex,hp);
             }
 

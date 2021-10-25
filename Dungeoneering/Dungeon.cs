@@ -7,6 +7,7 @@ using System.Net;
 using Dungeoneering_Server;
 using _Defines;
 using System.Threading;
+using Items;
 
 namespace Dungeoneering_Server
 {
@@ -21,6 +22,8 @@ namespace Dungeoneering_Server
         private int fight = 0;
         private int run = 0;
         public static string result;
+
+        public static string[] WeaponAffixes =  {"fire","water"};
         
 
         public Dungeon(Lobby players)
@@ -108,6 +111,7 @@ namespace Dungeoneering_Server
 
             return mes;
         }
+
 
         private string MessageReceiver()
         {
@@ -242,7 +246,7 @@ namespace Dungeoneering_Server
                 item.Dungeoneering = false;
                 if (partyDeath == false)
                 {
-                    item.character.GaintExperience(5 * monsterlevel);
+                    item.character.GaintExperience(100 * monsterlevel);
                 }
             }
 
@@ -256,8 +260,54 @@ namespace Dungeoneering_Server
                 string ret = $"Monster has died, returning to lobby screen, {5*monsterlevel}xp rewarded \n";
                 _Helper.SendMessageToAllInParty(ret, players);
 
+                var wpn = GenerateWeapon(monsterlevel);
+                string weaponMes = $"The Monster Dropped an item! : " +
+                    $"{wpn.Name} has dropped \n" +
+                    $"Damage :  {wpn.damage} \n" +
+                    $"\n" +
+                    $"game will go through each party member and ask if they want it, if they yes it will replace their current weapon \n" +
+                    $"if they so no it will ask the next player \n" +
+                    $"if all decline weapon will go lost \n";
+                _Helper.SendMessageToAllInParty(weaponMes, players);
 
-                string again = $"Do the party wish to continue exploring? Leader please choose \n" +
+                bool ctinue = true;
+                for (int i = 0; i < players.Players.Count; i++)
+                {
+                    if (ctinue == true)
+                    {
+                        string pturn = $"it's currently {players.Players[i].character.name} turn to choose \n";
+                        _Helper.SendMessageToAllInParty(pturn, players);
+
+                        while (true)
+                        {
+                            string doYouWantIt = $"Do you want the weapon? Y/N \n";
+                            _Helper.SendMessageToClient(players.Players[i].client, doYouWantIt);
+
+
+                            string answer = expectingMessage(players.Players[i]);
+                            answer = answer.ToLower();
+                            if (answer == "y")
+                            {
+                                players.Players[i].character.changeWeapon(wpn);
+                                ctinue = false;
+
+                                string pTookWeapon = $"{players.Players[i].character.name} picked up the weapon \n";
+                                _Helper.SendMessageToAllInParty(pTookWeapon, players);
+                                break;
+                            }
+                            else if (answer == "n")
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    
+                }
+                for (int i = 0; i < players.Players.Count; i++)
+                {
+                    players.Players[i].character.hp = players.Players[i].character.maxHP;
+                }
+                    string again = $"Do the party wish to continue exploring? Leader please choose \n" +
                     $"Leader is : {players.Players[0].character.name} \n";
                 _Helper.SendMessageToAllInParty(again, players);
 
@@ -287,6 +337,17 @@ namespace Dungeoneering_Server
             }
 
 
+        }
+
+
+        public Weapon GenerateWeapon(int level)
+        {
+            Random rnd = new Random();
+            int dmg = level;
+            var name = $"{WeaponAffixes[0]} Sword";
+            Weapon tempWEapon = new Weapon(name, dmg, 1, 1);
+
+            return (tempWEapon);
         }
 
     }

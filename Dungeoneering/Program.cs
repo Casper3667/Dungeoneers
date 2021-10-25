@@ -359,7 +359,10 @@ namespace Dungeoneering_Server
                         $"Level : {pla.Level} \n" +
                         $"HP : {pla.hp} \n" +
                         $"str : {pla.str} \n" +
-                        $"dex : {pla.dex} \n");
+                        $"dex : {pla.dex} \n" +
+                        $"\n" +
+                        $"Weapon name : {item.character.sword.Name} \n" +
+                        $"Weapon Damage : {item.character.sword.damage}");
 
 
 
