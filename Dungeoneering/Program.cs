@@ -155,14 +155,17 @@ namespace Dungeoneering_Server
             //byte[] tempbytes = new Byte[1];
             //int bytesRead = stream.Read(tempbytes);
 
+            
+
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                 data = data.ToLower();
+                player.input = data;
                 break;
             }
 
-            player.input = data;
+            
 
             return data;
         }
@@ -175,6 +178,7 @@ namespace Dungeoneering_Server
 
             //byte[] tempbytes = new Byte[1];
             //int bytesRead = stream.Read(tempbytes);
+
 
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {

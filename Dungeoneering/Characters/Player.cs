@@ -43,14 +43,14 @@ namespace Dungeon
         {
             Random rnd = new Random();
 
-            var dmg = rnd.Next(1, str+1);
+            var dmg = rnd.Next(str, (str*3));
 
             return dmg;
         }
 
         public string AttackRange()
         {
-            string range = $"({1} - {str + 1}) damage";
+            string range = $"({str} - {str*3}) damage";
 
             return range;
         }
