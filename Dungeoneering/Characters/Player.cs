@@ -35,7 +35,7 @@ namespace Dungeon
         }
         public override void Attack(Character target)
         {
-            int damage = str + sword.damage; // placeholder until weapons are implemented
+            int damage = str + sword.attack(); // placeholder until weapons are implemented
             target.TakeDamage(damage);
         }
 
@@ -78,7 +78,8 @@ namespace Dungeon
                 str += 5;
                 dex += 5;
                 hp += 10;
-                Program.LevelUp(name, client);
+
+                Program.LevelUp(name, client,this.Level,str,dex,hp);
             }
 
             

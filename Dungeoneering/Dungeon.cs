@@ -43,7 +43,8 @@ namespace Dungeoneering_Server
                 $"Dungeon 1 > lvl 1 - 3 \n" +
                 $"Dungeon 2 > lvl 2 - 6 \n" +
                 $"Dungeon 3 > lvl 3 - 9 \n" +
-                $"to pick a dungeon, write the number of the associated dungeon, dungeon 1 would for exaple be 1 \n";
+                $"there is no max for dungeon level, these are examples, 50 is a viable input \n" + 
+                $"to pick a dungeon, write the number of the associated dungeon, dungeon 1 would for example be 1 \n";
 
             _Helper.SendMessageToClient(leader.client, dungeons);
 

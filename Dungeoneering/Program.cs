@@ -175,7 +175,7 @@ namespace Dungeoneering_Server
             }
 
 
-
+            player.input = data;
             return data;
         }
         public static string recieveData(NetworkStream stream)
@@ -367,13 +367,9 @@ namespace Dungeoneering_Server
             }
         }
 
-        public static void LevelUp(string name, TcpClient client)
+        public static void LevelUp(string name, TcpClient client,int lvl,int str,int dex,int health)
         {
-            int level = repo.FindAccount(name, client).character.Level + 1;
-            int dmg = repo.FindAccount(name, client).character.str + 5;
-            int dex = repo.FindAccount(name, client).character.dex + 5;
-            int health = repo.FindAccount(name, client).character.hp + 10;
-            repo.LevelUp(name, level, dmg, dex, health);
+            repo.LevelUp(name, lvl, str, dex, health);
         }
 
         private static void CreateAccount(Player_Client player)

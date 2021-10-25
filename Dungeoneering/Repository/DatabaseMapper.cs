@@ -21,6 +21,7 @@ namespace Dungeoneering_Server.Repository
                 int health = reader.GetInt32(5);
                 int dex = reader.GetInt32(6);
 
+
                 results.Add(new Player_Client(client, client.Client.RemoteEndPoint.ToString(), name, password, salt, damage, dex, level));
 
             }
