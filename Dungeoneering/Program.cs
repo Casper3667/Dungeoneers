@@ -408,6 +408,7 @@ namespace Dungeoneering_Server
             }
             else
             {
+                bool nameTaken = false;
                 while (true)
                 {
                     byte[] tryAgain = Encoding.UTF8.GetBytes("That is not the right password, type 1 to try again and 2 to create a new account");
@@ -424,9 +425,39 @@ namespace Dungeoneering_Server
                         byte[] newName = Encoding.UTF8.GetBytes("What would you like as your name?");
                         player.client.GetStream().Write(newName, 0, newName.Length);
                         string name = recieveData(player.client.GetStream());
-                        player.character.name = name;
-                        CreateAccount(player);
-                        break;
+                        foreach (Player_Client p in repo.GetAllAccounts(player.client))
+                        {
+                            if(name == p.character.name)
+                            {
+                                nameTaken = true;
+                            }
+                        }
+                        if(!nameTaken)
+                        {
+                            player.character.name = name;
+                            CreateAccount(player);
+                            break;
+                        }
+                        else
+                        {
+                            while (nameTaken)
+                            {
+                                byte[] nameAlreadyTaken = Encoding.UTF8.GetBytes("Name already taken");
+                                player.client.GetStream().Write(nameAlreadyTaken, 0, nameAlreadyTaken.Length);
+                                byte[] yourName = Encoding.UTF8.GetBytes("What would you like as your name?");
+                                player.client.GetStream().Write(yourName, 0, yourName.Length);
+                                string currentName = recieveData(player.client.GetStream());
+                                if(!repo.GetAllAccounts(player.client).Exists(x => x.character.name == currentName))
+                                {
+                                    nameTaken = false;
+                                    player.character.name = currentName;
+                                    CreateAccount(player);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        
                     }
                 }
 
