@@ -246,12 +246,16 @@ namespace Dungeoneering_Server
                 item.Dungeoneering = false;
                 if (partyDeath == false)
                 {
-                    item.character.GaintExperience(100 * monsterlevel);
+                    item.character.GaintExperience(5 * monsterlevel);
                 }
             }
 
             if (partyDeath == true)
             {
+                foreach (var item in players.Players)
+                {
+                    item.character.hp = item.character.maxHP;
+                }
                 string allDeadLul = "all players have died, return to lobby";
                 _Helper.SendMessageToAllInParty(allDeadLul, players);
             }
