@@ -25,10 +25,10 @@ namespace Dungeoneering_Server.Repository
             IDbConnection con = provider.CreateConnection();
             con.Open();
 
-            SQLiteCommand cmd = new SQLiteCommand("DROP TABLE items", (SQLiteConnection)con);
-            cmd.ExecuteNonQuery();
+            //SQLiteCommand cmd = new SQLiteCommand("DROP TABLE items", (SQLiteConnection)con);
+            //cmd.ExecuteNonQuery();
 
-            cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Password STRING, Salt STRING, Level INTEGER, Damage INTEGER, Health INTEGER, Dexterity INTEGER);", (SQLiteConnection)con);
+            SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Password STRING, Salt STRING, Level INTEGER, Damage INTEGER, Health INTEGER, Dexterity INTEGER);", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS items(Name STRING PRIMARY KEY, Damage INTEGER, Element STRING, Owner STRING );", (SQLiteConnection)con);
