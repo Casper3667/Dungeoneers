@@ -188,13 +188,21 @@ namespace Dungeoneering_Server
             //byte[] tempbytes = new Byte[1];
             //int bytesRead = stream.Read(tempbytes);
 
-
+            try
+            {
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                     data = data.ToLower();
                     break;
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Connection lost");
+                stream.Close();
+            }
+                
 
 
 
@@ -377,6 +385,11 @@ namespace Dungeoneering_Server
 
         private static void CreateAccount(Player_Client player)
         {
+            player.character.str = 1;
+            player.character.hp = 50;
+            player.character.Level = 1;
+            player.character.dex = 1;
+
             byte[] pass = Encoding.UTF8.GetBytes("What would you like as your password?");
             player.client.GetStream().Write(pass, 0, pass.Length);
 
