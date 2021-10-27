@@ -12,6 +12,7 @@ namespace _Defines
         }
         public enum EnemyHP
         {
+
             ORC = 10
         }
         public enum EnemyArmor

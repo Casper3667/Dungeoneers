@@ -26,6 +26,7 @@ namespace Dungeon
             salt = _salt;
             str = _str;
             dex = _dex;
+            sword = new Weapon("Basic sword", 2, "fire", _name);
             //sword = Program.CheckForWeapon(_name);
             inventory = new List<Item>();
             inventory.Add(sword);

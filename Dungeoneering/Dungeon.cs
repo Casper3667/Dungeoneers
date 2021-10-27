@@ -23,7 +23,7 @@ namespace Dungeoneering_Server
         private int run = 0;
         public static string result;
 
-        public static string[] WeaponAffixes =  {"fire","water"};
+        public static string[] WeaponAffixes =  {"fire","lightning","inferno","water","bat"};
         
 
         public Dungeon(Lobby players)
@@ -349,8 +349,9 @@ namespace Dungeoneering_Server
         {
             Random rnd = new Random();
             int dmg = level;
-            var name = $"{WeaponAffixes[0]} Sword";
-            Weapon tempWEapon = new Weapon(name, dmg, "", "");
+            var elementName = WeaponAffixes[rnd.Next(0, 5)];
+            var name = $"{elementName} Sword";
+            Weapon tempWEapon = new Weapon(name, dmg, elementName, "");
 
             return (tempWEapon);
         }
