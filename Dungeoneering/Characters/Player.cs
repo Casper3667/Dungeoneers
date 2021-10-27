@@ -78,7 +78,7 @@ namespace Dungeon
         {
             exp += xp;
 
-            if (exp > (100*Level))
+            if (exp > (50*Level))
             {
                 Level += 1;
 
@@ -88,7 +88,8 @@ namespace Dungeon
                 maxHP += 20;
 
                
-                Program.LevelUp(name, client,this.Level,str,dex,hp);
+                Program.LevelUp(name, client,this.Level,str,dex,maxHP);
+                exp = 0;
             }   
         }
     }
