@@ -296,6 +296,7 @@ namespace Dungeoneering_Server
                                 ctinue = false;
 
                                 string pTookWeapon = $"{players.Players[i].character.name} picked up the weapon \n";
+                                Program.CollectWeapon(players.Players[i], wpn.Name, wpn.damage, wpn.prefix);
                                 _Helper.SendMessageToAllInParty(pTookWeapon, players);
                                 break;
                             }
@@ -348,8 +349,9 @@ namespace Dungeoneering_Server
         {
             Random rnd = new Random();
             int dmg = level;
-            var name = $"{WeaponAffixes[rnd.Next(0,5)]} Sword";
-            Weapon tempWEapon = new Weapon(name, dmg, 1, 1, WeaponAffixes[rnd.Next(0, 5)]);
+            var elementName = WeaponAffixes[rnd.Next(0, 5)];
+            var name = $"{elementName} Sword";
+            Weapon tempWEapon = new Weapon(name, dmg, elementName, "");
 
             return (tempWEapon);
         }

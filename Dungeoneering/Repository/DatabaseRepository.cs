@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Data;
 using System.Linq;
 using System.Net.Sockets;
+using Items;
 
 namespace Dungeoneering_Server.Repository
 {
@@ -31,7 +32,7 @@ namespace Dungeoneering_Server.Repository
             SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS clients(Name STRING PRIMARY KEY, Password STRING, Salt STRING, Level INTEGER, Damage INTEGER, Health INTEGER, Dexterity INTEGER);", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
-            cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS items(Name STRING PRIMARY KEY, Damage INTEGER, Element STRING, Owner STRING );", (SQLiteConnection)con);
+            cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS items(Owner STRING PRIMARY KEY, Damage INTEGER, Element STRING, Name STRING );", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             con.Close();
@@ -45,6 +46,17 @@ namespace Dungeoneering_Server.Repository
             con.Open();
 
             SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO clients(Name, Password, Salt, Level, Damage, Health, Dexterity) VALUES ('{name}', '{password}', '{salt}', '{level}', '{damage}', '{health}', '{dex}')", (SQLiteConnection)con);
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+        }
+
+        public void GiveWeapon(string owner, string name, int damage, string element)
+        {
+            IDbConnection con = provider.CreateConnection();
+            con.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand($"INSERT INTO items(Owner, Damage, Element, Name) VALUES ('{owner}', '{damage}', '{element}', '{name}')", (SQLiteConnection)con);
             cmd.ExecuteNonQuery();
 
             con.Close();
@@ -87,6 +99,18 @@ namespace Dungeoneering_Server.Repository
 
         }
 
+        public void RemoveWeapon(string owner)
+        {
+            IDbConnection con = provider.CreateConnection();
+            con.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand($"DELETE FROM items WHERE Owner = '{owner}'", (SQLiteConnection)con);
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+
+        }
+
         public List<Player_Client> GetAllAccounts(TcpClient client)
         {
             IDbConnection con = provider.CreateConnection();
@@ -100,6 +124,20 @@ namespace Dungeoneering_Server.Repository
 
             return result;
             
+        }
+
+        public List<Weapon> GetAllWeapons()
+        {
+            IDbConnection con = provider.CreateConnection();
+            con.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand("Select * from items", (SQLiteConnection)con);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            List<Weapon> result = mapper.ReadAllWeaponsFromMapper(reader);
+
+            con.Close();
+
+            return result;
         }
 
         

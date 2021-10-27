@@ -26,13 +26,15 @@ namespace Dungeon
             salt = _salt;
             str = _str;
             dex = _dex;
-            sword = new Weapon("Basic sword", 2, 2, 100,"fire");
+            sword = new Weapon("Basic sword", 2, "fire", _name);
+            //sword = Program.CheckForWeapon(_name);
             inventory = new List<Item>();
             inventory.Add(sword);
 
             this.damage = (str * 1);
             this.hp = (50 * Level);
             maxHP = hp;
+            
         }
         public override void Attack(Character target)
         {
@@ -88,9 +90,7 @@ namespace Dungeon
 
                
                 Program.LevelUp(name, client,this.Level,str,dex,hp);
-            }
-
-            
+            }   
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Items;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Net.Sockets;
@@ -23,6 +24,23 @@ namespace Dungeoneering_Server.Repository
 
 
                 results.Add(new Player_Client(client, client.Client.RemoteEndPoint.ToString(), name, password, salt, damage, dex, level));
+
+            }
+            return results;
+        }
+
+        public List<Weapon> ReadAllWeaponsFromMapper(SQLiteDataReader reader)
+        {
+            List<Weapon> results = new List<Weapon>();
+            while (reader.Read())
+            {
+                string owner = reader.GetString(0);
+                int damage = reader.GetInt32(1);
+                string element = reader.GetString(2);
+                string name = reader.GetString(3);
+
+
+                results.Add(new Weapon(name, damage, element, owner));
 
             }
             return results;

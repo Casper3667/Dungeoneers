@@ -7,14 +7,14 @@ namespace Items
     public class Weapon : Item
     {
         public int damage;
+        public string owner;
         public string prefix;
-        public Weapon(string _name, int _damage, int _value, int _durability,string pref)
+        public Weapon(string _name, int _damage, string _element, string _owner)
         {
-            prefix = pref;
+            prefix = _element;
             Name = $"{prefix} sword";
             damage = _damage;
-            value = _value;
-            durability = _durability;
+            owner = _owner;
         }
 
         public int attack()

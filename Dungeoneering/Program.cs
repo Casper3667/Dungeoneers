@@ -9,6 +9,8 @@ using _Defines;
 using System.Data.SQLite;
 using Dungeoneering_Server.Repository;
 using System.Security.Cryptography;
+using Items;
+using Dungeon;
 
 namespace Dungeoneering_Server
 {
@@ -148,6 +150,7 @@ namespace Dungeoneering_Server
         public static void generatePlayer(TcpClient client,string ip,string name, string password, string salt, int level, int damage, int dex)
         {
             allPlayers.Add(new Player_Client(client, ip, name, password, salt, damage, dex, level));
+            allPlayers.Find(x => x.character.name == name).character.sword = CheckForWeapon(name);
         }
         public static string recieveDataFromPlayer(NetworkStream stream,Player_Client player)
         {
@@ -383,6 +386,26 @@ namespace Dungeoneering_Server
             repo.LevelUp(name, lvl, str, dex, health);
         }
 
+        public static void CollectWeapon(Player_Client player, string name, int damage, string element)
+        {
+            List<string> OwnerOfWeapons = new List<string>();
+            for (int i = 0; i < repo.GetAllWeapons().Count; i++)
+            {
+                OwnerOfWeapons.Add(repo.GetAllWeapons()[i].owner);
+            }
+            if(OwnerOfWeapons.Exists(x => x == player.character.name))
+            {
+                foreach (Weapon item in repo.GetAllWeapons())
+                {
+                    if(item.owner == player.character.name)
+                    {
+                        repo.RemoveWeapon(item.owner);
+                    }
+                }
+            }
+            repo.GiveWeapon(player.character.name, name, damage, element);
+        }
+
         private static void CreateAccount(Player_Client player)
         {
             player.character.str = 1;
@@ -479,6 +502,27 @@ namespace Dungeoneering_Server
 
             }
         }
+
+        public static Weapon CheckForWeapon(string name)
+        {
+            List<string> PlayerWeapons = new List<string>();
+            foreach (Weapon item in repo.GetAllWeapons())
+            {
+                PlayerWeapons.Add(item.owner);
+            }
+            if(PlayerWeapons.Exists(x => x == name))
+            {
+                foreach (Weapon item in repo.GetAllWeapons())
+                {
+                    if(item.owner == name)
+                    {
+                        return item;
+                    }
+                }
+            }
+            return new Weapon("Basic sword", 2, "", "");
+        }
+
 
         public static void joinParty(TcpClient client)
         {
