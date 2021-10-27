@@ -8,9 +8,9 @@ namespace Items
     {
         public int damage;
         public string prefix;
-        public Weapon(string _name, int _damage, int _value, int _durability)
+        public Weapon(string _name, int _damage, int _value, int _durability,string pref)
         {
-            prefix = "fire";
+            prefix = pref;
             Name = $"{prefix} sword";
             damage = _damage;
             value = _value;
@@ -26,6 +26,18 @@ namespace Items
             {
                 case "fire":
                 prefixDmg = fire();
+                    break;
+                case "lightning":
+                    prefixDmg = Ligtning();
+                    break;
+                case "inferno":
+                    prefixDmg = Inferno();
+                    break;
+                case "water":
+                    prefixDmg = Water();
+                    break;
+                case "bat":
+                    prefixDmg = Bat();
                     break;
             }
 
@@ -43,6 +55,20 @@ namespace Items
         {
             Random rnd = new Random();
             return (rnd.Next(3, 12));
+        }
+
+        public int Inferno()
+        {
+            return (12);
+        }
+        public int Water()
+        {
+            Random rnd = new Random();
+            return (rnd.Next(1,50));
+        }
+        public int Bat()
+        {
+            return (16);
         }
     }
 }

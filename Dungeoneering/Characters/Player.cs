@@ -26,7 +26,7 @@ namespace Dungeon
             salt = _salt;
             str = _str;
             dex = _dex;
-            sword = new Weapon("Basic sword", 2, 2, 100);
+            sword = new Weapon("Basic sword", 2, 2, 100,"fire");
             inventory = new List<Item>();
             inventory.Add(sword);
 
@@ -77,7 +77,7 @@ namespace Dungeon
         {
             exp += xp;
 
-            if (exp > (100*Level))
+            if (exp > (50*Level))
             {
                 Level += 1;
 
