@@ -537,19 +537,26 @@ namespace Dungeoneering_Server
                 "For example to join party 0 write 0");
 
             var partyNumber = recieveData(client.GetStream());
-
-            int result = Int32.Parse(partyNumber);
-
-            foreach (var item in allPlayers)
+            try
             {
-                if (item.client == client)
+                int result = Int32.Parse(partyNumber);
+
+                foreach (var item in allPlayers)
                 {
-                    ListOfLobbies[result].join(item);
-                    //ListOfLobbies[result].Players.Add(item);
-                    //ListOfLobbies.Find(x => x.name.Contains($"Party {partyNumber}"));
+                    if (item.client == client)
+                    {
+                        ListOfLobbies[result].join(item);
+                        //ListOfLobbies[result].Players.Add(item);
+                        //ListOfLobbies.Find(x => x.name.Contains($"Party {partyNumber}"));
+                    }
                 }
+                _Helper.SendMessageToClient(client, $"You have joined Party {partyNumber}");
             }
-            _Helper.SendMessageToClient(client,$"You have joined Party {partyNumber}");
+            catch (Exception)
+            {
+                byte[] mistake = Encoding.UTF8.GetBytes("You did a wrong input");
+                client.GetStream().Write(mistake, 0, mistake.Length);
+            }
         }
 
         public static void LeaveParty(TcpClient client)

@@ -50,13 +50,24 @@ namespace Dungeoneering_Server
                 $"to pick a dungeon, write the number of the associated dungeon, dungeon 1 would for example be 1 \n";
 
             _Helper.SendMessageToClient(leader.client, dungeons);
+            try
+            {
+                int result = Int32.Parse(expectingMessage(leader));
 
-            int result = Int32.Parse(expectingMessage(leader));
+                Random rnd = new Random();
+                int level = rnd.Next(result, result * 3);
 
-            Random rnd = new Random();
-            int level = rnd.Next(result,result*3);
+                Quest(level);
+            }
+            catch (Exception)
+            {
+                byte[] missInput = Encoding.UTF8.GetBytes("You did a wrong input");
+                leader.client.GetStream().Write(missInput, 0, missInput.Length);
+                ChooseLevel();
+            }
+            
 
-            Quest(level);
+            
         }
 
         private void Quest(int level)
